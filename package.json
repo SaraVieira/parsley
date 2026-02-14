@@ -1,0 +1,79 @@
+{
+  "name": "vite-react-tailwind",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^24.11.x"
+  },
+  "packageManager": "pnpm@10.24.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "esbuild",
+      "sharp"
+    ]
+  },
+  "scripts": {
+    "dev": "vite --port 3000",
+    "start": "vite --port 3000",
+    "build": "vite build",
+    "serve": "vite preview",
+    "generate-pwa-assets": "pwa-assets-generator",
+    "turbo": "pnpm dlx turbo@2.6.1",
+    "type:check": "tsc",
+    "test": "vitest run",
+    "test:ui": "vitest --ui --coverage",
+    "test:coverage": "vitest --coverage run",
+    "biome:check": "biome check --no-errors-on-unmatched --error-on-warnings",
+    "biome:fix": "pnpm biome:check --write",
+    "biome:ci": "biome ci",
+    "check:turbo": "pnpm turbo biome:check type:check test",
+    "release": "cross-env HUSKY=0 commit-and-tag-version",
+    "up-interactive": "pnpm up -i",
+    "up-latest": "pnpm up-interactive -L",
+    "knip": "knip",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.18",
+    "@tanstack/react-devtools": "^0.9.5",
+    "@tanstack/react-query": "^5.90.21",
+    "@tanstack/react-query-devtools": "^5.91.3",
+    "@tanstack/react-router": "^1.159.10",
+    "@tanstack/react-router-devtools": "^1.159.10",
+    "@tanstack/router-plugin": "^1.159.12",
+    "@theme-toggles/react": "^4.1.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwindcss": "^4.1.18",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.15",
+    "@commitlint/cli": "^20.4.1",
+    "@commitlint/config-conventional": "^20.4.1",
+    "@commitlint/types": "^20.4.0",
+    "@julr/vite-plugin-validate-env": "^2.2.0",
+    "@tailwindcss/typography": "^0.5.19",
+    "@tanstack/devtools-vite": "^0.5.1",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vite-pwa/assets-generator": "^1.0.2",
+    "@vitejs/plugin-react": "^5.1.4",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "commit-and-tag-version": "^12.6.1",
+    "husky": "^9.1.7",
+    "jsdom": "^28.0.0",
+    "knip": "^5.83.1",
+    "lint-staged": "^16.2.7",
+    "typescript": "^5.9.3",
+    "vite": "8.0.0-beta.8",
+    "vite-plugin-checker": "^0.12.0",
+    "vite-plugin-pwa": "^1.2.0",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.0.18",
+    "web-vitals": "^5.1.0"
+  }
+}
