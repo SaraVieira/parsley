@@ -1,22 +1,43 @@
-import { useMemo, useEffect, useState, useCallback, createContext, useContext } from "react";
 import {
-  ReactFlow,
   Background,
   Controls,
-  useNodesState,
-  useEdgesState,
-  type NodeProps,
-  type Node,
   Handle,
-  Position,
   MarkerType,
-} from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import { Copy, Check, ChevronRight, ChevronDown, Search, X, Trash2, Plus } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { jsonToGraph } from "@/lib/utils/json-to-graph";
-import { useResolvedTheme } from "@/lib/hooks/use-resolved-theme";
-import { useParsleyStore } from "@/lib/stores/parsley-store";
+  type Node,
+  type NodeProps,
+  Position,
+  ReactFlow,
+  useEdgesState,
+  useNodesState,
+} from '@xyflow/react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import '@xyflow/react/dist/style.css';
+import {
+  Check,
+  ChevronDown,
+  ChevronRight,
+  Copy,
+  Plus,
+  Search,
+  Trash2,
+  X,
+} from 'lucide-react';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { useResolvedTheme } from '@/lib/hooks/use-resolved-theme';
+import { useParsleyStore } from '@/lib/stores/parsley-store';
+import { jsonToGraph } from '@/lib/utils/json-to-graph';
 
 type NodeData = {
   label: string;
@@ -36,22 +57,45 @@ const GraphContext = createContext<{
   highlightedIds: Set<string>;
   onEditValue: (path: string, rawValue: string) => void;
   onDelete: (path: string) => void;
+  onBulkDeleteKey: (key: string) => void;
   onAdd: (path: string, isArray: boolean) => void;
   onRenameKey: (path: string, newKey: string) => void;
   onBulkRenameKey: (oldKey: string, newKey: string) => void;
   onRenameRoot: (name: string) => void;
-}>({ collapsedIds: new Set(), toggleCollapse: () => {}, highlightedIds: new Set(), onEditValue: () => {}, onDelete: () => {}, onAdd: () => {}, onRenameKey: () => {}, onBulkRenameKey: () => {}, onRenameRoot: () => {} });
+}>({
+  collapsedIds: new Set(),
+  toggleCollapse: () => {},
+  highlightedIds: new Set(),
+  onEditValue: () => {},
+  onDelete: () => {},
+  onBulkDeleteKey: () => {},
+  onAdd: () => {},
+  onRenameKey: () => {},
+  onBulkRenameKey: () => {},
+  onRenameRoot: () => {},
+});
 
-function EditableValue({ value, className, path }: { value: string; className: string; path: string }) {
+function EditableValue({
+  value,
+  className,
+  path,
+}: {
+  value: string;
+  className: string;
+  path: string;
+}) {
   const { onEditValue } = useContext(GraphContext);
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
 
-  const startEdit = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    setEditValue(value);
-    setEditing(true);
-  }, [value]);
+  const startEdit = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setEditValue(value);
+      setEditing(true);
+    },
+    [value],
+  );
 
   if (editing) {
     return (
@@ -59,11 +103,17 @@ function EditableValue({ value, className, path }: { value: string; className: s
         autoFocus
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
-        onBlur={() => { onEditValue(path, editValue); setEditing(false); }}
+        onBlur={() => {
+          onEditValue(path, editValue);
+          setEditing(false);
+        }}
         onKeyDown={(e) => {
           e.stopPropagation();
-          if (e.key === "Enter") { onEditValue(path, editValue); setEditing(false); }
-          if (e.key === "Escape") setEditing(false);
+          if (e.key === 'Enter') {
+            onEditValue(path, editValue);
+            setEditing(false);
+          }
+          if (e.key === 'Escape') setEditing(false);
         }}
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
@@ -76,11 +126,17 @@ function EditableValue({ value, className, path }: { value: string; className: s
     return (
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className={`${className} cursor-help nodrag`} onDoubleClick={startEdit}>
+          <span
+            className={`${className} cursor-help nodrag`}
+            onDoubleClick={startEdit}
+          >
             {value.slice(0, MAX_VALUE_LENGTH)}…
           </span>
         </TooltipTrigger>
-        <TooltipContent side="bottom" className="max-w-[300px] break-all text-xs">
+        <TooltipContent
+          side="bottom"
+          className="max-w-[300px] break-all text-xs"
+        >
           {value}
         </TooltipContent>
       </Tooltip>
@@ -88,7 +144,10 @@ function EditableValue({ value, className, path }: { value: string; className: s
   }
 
   return (
-    <span className={`${className} cursor-text nodrag`} onDoubleClick={startEdit}>
+    <span
+      className={`${className} cursor-text nodrag`}
+      onDoubleClick={startEdit}
+    >
       {value}
     </span>
   );
@@ -100,12 +159,15 @@ function EditableKey({ keyName, path }: { keyName: string; path: string }) {
   const [showChoice, setShowChoice] = useState(false);
   const [editValue, setEditValue] = useState(keyName);
 
-  const startEdit = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    setEditValue(keyName);
-    setEditing(true);
-    setShowChoice(false);
-  }, [keyName]);
+  const startEdit = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setEditValue(keyName);
+      setEditing(true);
+      setShowChoice(false);
+    },
+    [keyName],
+  );
 
   const handleCommit = useCallback(() => {
     if (!editValue || editValue === keyName) {
@@ -118,17 +180,27 @@ function EditableKey({ keyName, path }: { keyName: string; path: string }) {
 
   if (showChoice) {
     return (
-      <div className="nodrag flex items-center gap-1" onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
+      <div
+        className="nodrag flex items-center gap-1"
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <span className="text-xs font-medium text-primary">{editValue}</span>
         <button
-          onClick={() => { onRenameKey(path, editValue); setShowChoice(false); }}
+          onClick={() => {
+            onRenameKey(path, editValue);
+            setShowChoice(false);
+          }}
           className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/20"
           title="Rename only this key"
         >
           This
         </button>
         <button
-          onClick={() => { onBulkRenameKey(keyName, editValue); setShowChoice(false); }}
+          onClick={() => {
+            onBulkRenameKey(keyName, editValue);
+            setShowChoice(false);
+          }}
           className="rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-600 hover:bg-amber-500/20 dark:text-amber-400"
           title="Rename all matching keys"
         >
@@ -153,8 +225,8 @@ function EditableKey({ keyName, path }: { keyName: string; path: string }) {
         onBlur={handleCommit}
         onKeyDown={(e) => {
           e.stopPropagation();
-          if (e.key === "Enter") handleCommit();
-          if (e.key === "Escape") setEditing(false);
+          if (e.key === 'Enter') handleCommit();
+          if (e.key === 'Escape') setEditing(false);
         }}
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
@@ -164,9 +236,80 @@ function EditableKey({ keyName, path }: { keyName: string; path: string }) {
   }
 
   return (
-    <span className="shrink-0 font-medium text-muted-foreground cursor-text nodrag" onDoubleClick={startEdit}>
+    <span
+      className="shrink-0 font-medium text-muted-foreground cursor-text nodrag"
+      onDoubleClick={startEdit}
+    >
       {keyName}
     </span>
+  );
+}
+
+function DeleteButton({
+  path,
+  keyName,
+  className,
+  iconSize = 'size-2.5',
+}: {
+  path: string;
+  keyName?: string;
+  className: string;
+  iconSize?: string;
+}) {
+  const { onDelete, onBulkDeleteKey } = useContext(GraphContext);
+  const [showChoice, setShowChoice] = useState(false);
+
+  if (showChoice && keyName) {
+    return (
+      <div
+        className="nodrag flex items-center gap-1"
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={() => {
+            onDelete(path);
+            setShowChoice(false);
+          }}
+          className="rounded bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive hover:bg-destructive/20"
+          title="Delete only this key"
+        >
+          This
+        </button>
+        <button
+          onClick={() => {
+            onBulkDeleteKey(keyName);
+            setShowChoice(false);
+          }}
+          className="rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-600 hover:bg-amber-500/20 dark:text-amber-400"
+          title="Delete all matching keys"
+        >
+          All
+        </button>
+        <button
+          onClick={() => setShowChoice(false)}
+          className="rounded px-1 py-0.5 text-[10px] text-muted-foreground hover:text-foreground"
+        >
+          <X className="size-2.5" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        if (keyName) {
+          setShowChoice(true);
+        } else {
+          onDelete(path);
+        }
+      }}
+      className={className}
+    >
+      <Trash2 className={iconSize} />
+    </button>
   );
 }
 
@@ -175,36 +318,48 @@ function useIsHighlighted(nodeId: string) {
   return highlightedIds.size > 0 ? highlightedIds.has(nodeId) : null; // null = no search active
 }
 
-function CollapseToggle({ nodeId, hasChildren }: { nodeId: string; hasChildren?: boolean }) {
+function CollapseToggle({
+  nodeId,
+  hasChildren,
+}: {
+  nodeId: string;
+  hasChildren?: boolean;
+}) {
   const { collapsedIds, toggleCollapse } = useContext(GraphContext);
   if (!hasChildren) return null;
   const isCollapsed = collapsedIds.has(nodeId);
   return (
     <button
-      onClick={(e) => { e.stopPropagation(); toggleCollapse(nodeId); }}
+      onClick={(e) => {
+        e.stopPropagation();
+        toggleCollapse(nodeId);
+      }}
       className="ml-auto shrink-0 rounded p-0.5 hover:bg-black/10 dark:hover:bg-white/10"
     >
-      {isCollapsed ? <ChevronRight className="size-3" /> : <ChevronDown className="size-3" />}
+      {isCollapsed ? (
+        <ChevronRight className="size-3" />
+      ) : (
+        <ChevronDown className="size-3" />
+      )}
     </button>
   );
 }
 
 const MAX_VALUE_LENGTH = 40;
 
-
 function getValueColor(type: string): string {
   switch (type) {
-    case "string":
-      return "text-emerald-500 dark:text-emerald-400";
-    case "number":
-      return "text-blue-500 dark:text-blue-400";
-    case "boolean":
-      return "text-amber-500 dark:text-amber-400";
-    case "null":
-    case "undefined":
-      return "text-muted-foreground italic";
+    case 'string':
+      return 'text-emerald-500 dark:text-emerald-400';
+    case 'number':
+      return 'text-blue-500 dark:text-blue-400';
+    case 'boolean':
+      return 'text-amber-500 dark:text-amber-400';
+    case 'null':
+    case 'undefined':
+      return 'text-muted-foreground italic';
     default:
-      return "text-foreground";
+      return 'text-foreground';
   }
 }
 
@@ -221,11 +376,17 @@ function EditableLabel({ label, isRoot }: { label: string; isRoot: boolean }) {
         autoFocus
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
-        onBlur={() => { if (editValue.trim()) onRenameRoot(editValue.trim()); setEditing(false); }}
+        onBlur={() => {
+          if (editValue.trim()) onRenameRoot(editValue.trim());
+          setEditing(false);
+        }}
         onKeyDown={(e) => {
           e.stopPropagation();
-          if (e.key === "Enter") { if (editValue.trim()) onRenameRoot(editValue.trim()); setEditing(false); }
-          if (e.key === "Escape") setEditing(false);
+          if (e.key === 'Enter') {
+            if (editValue.trim()) onRenameRoot(editValue.trim());
+            setEditing(false);
+          }
+          if (e.key === 'Escape') setEditing(false);
         }}
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
@@ -235,29 +396,55 @@ function EditableLabel({ label, isRoot }: { label: string; isRoot: boolean }) {
   }
 
   return (
-    <span className="block w-full cursor-text nodrag" onDoubleClick={(e) => { e.stopPropagation(); setEditValue(label); setEditing(true); }}>
+    <span
+      className="block w-full cursor-text nodrag"
+      onDoubleClick={(e) => {
+        e.stopPropagation();
+        setEditValue(label);
+        setEditing(true);
+      }}
+    >
       {label}
     </span>
   );
 }
 
-function ObjectNode({ id, data }: NodeProps<Node<{ label: string; entries?: EntryData[]; hasChildren?: boolean; jsonPath?: string }>>) {
+function ObjectNode({
+  id,
+  data,
+}: NodeProps<
+  Node<{
+    label: string;
+    entries?: EntryData[];
+    hasChildren?: boolean;
+    jsonPath?: string;
+  }>
+>) {
   const highlighted = useIsHighlighted(id);
   const { onDelete, onAdd } = useContext(GraphContext);
-  const dimClass = highlighted === false ? "opacity-30" : "";
-  const ringClass = highlighted === true ? "ring-2 ring-primary" : "";
-  const isRoot = data.jsonPath === "$";
+  const dimClass = highlighted === false ? 'opacity-30' : '';
+  const ringClass = highlighted === true ? 'ring-2 ring-primary' : '';
+  const isRoot = data.jsonPath === '$';
   return (
-    <div className={`min-w-[200px] max-w-[320px] rounded-lg border border-border/60 bg-card shadow-md dark:border-white/10 dark:bg-zinc-900 ${dimClass} ${ringClass}`}>
-      <Handle type="target" position={Position.Left} className="!size-1.5 !bg-primary/40 !cursor-default" />
-      <div className="flex items-center rounded-t-lg border-b border-border/60 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary dark:border-white/10 dark:bg-primary/20">
+    <div
+      className={`min-w-[200px] max-w-[320px] rounded-lg border border-border/60 bg-card shadow-md dark:border-white/10 dark:bg-zinc-900 ${dimClass} ${ringClass}`}
+    >
+      <Handle
+        type="target"
+        position={Position.Left}
+        className="!size-1.5 !bg-zinc-500/40 !cursor-default"
+      />
+      <div className="flex items-center rounded-t-lg border-b border-border/60 bg-zinc-500/10 px-3 py-1.5 text-xs font-semibold text-zinc-300 dark:border-white/10 dark:bg-zinc-500/15">
         <div className="flex-1 min-w-0">
           <EditableLabel label={data.label} isRoot={isRoot} />
         </div>
         <div className="ml-auto flex items-center gap-0.5">
-          {data.jsonPath && data.jsonPath !== "$" && (
+          {data.jsonPath && data.jsonPath !== '$' && (
             <button
-              onClick={(e) => { e.stopPropagation(); onDelete(data.jsonPath!); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(data.jsonPath!);
+              }}
               className="shrink-0 rounded p-0.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
             >
               <Trash2 className="size-3" />
@@ -270,10 +457,10 @@ function ObjectNode({ id, data }: NodeProps<Node<{ label: string; entries?: Entr
         <div className="px-3 py-1.5">
           {data.entries.map((entry) => {
             const entryPath = data.jsonPath
-              ? (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(entry.key)
-                  ? `${data.jsonPath}.${entry.key}`
-                  : `${data.jsonPath}["${entry.key}"]`)
-              : "";
+              ? /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(entry.key)
+                ? `${data.jsonPath}.${entry.key}`
+                : `${data.jsonPath}["${entry.key}"]`
+              : '';
             return (
               <div
                 key={entry.key}
@@ -281,13 +468,16 @@ function ObjectNode({ id, data }: NodeProps<Node<{ label: string; entries?: Entr
               >
                 <EditableKey keyName={entry.key} path={entryPath} />
                 <div className="flex items-center gap-1">
-                  <EditableValue value={entry.value} className={getValueColor(entry.type)} path={entryPath} />
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onDelete(entryPath); }}
+                  <EditableValue
+                    value={entry.value}
+                    className={getValueColor(entry.type)}
+                    path={entryPath}
+                  />
+                  <DeleteButton
+                    path={entryPath}
+                    keyName={entry.key}
                     className="nodrag shrink-0 rounded p-0.5 text-muted-foreground/0 hover:text-destructive group-hover/entry:text-muted-foreground/50"
-                  >
-                    <Trash2 className="size-2.5" />
-                  </button>
+                  />
                 </div>
               </div>
             );
@@ -297,35 +487,61 @@ function ObjectNode({ id, data }: NodeProps<Node<{ label: string; entries?: Entr
       {data.jsonPath && (
         <div className="border-t border-border/60 dark:border-white/10 px-3 py-1">
           <button
-            onClick={(e) => { e.stopPropagation(); onAdd(data.jsonPath!, false); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onAdd(data.jsonPath!, false);
+            }}
             className="nodrag flex items-center gap-1 text-[10px] text-muted-foreground hover:text-primary"
           >
             <Plus className="size-2.5" /> Add property
           </button>
         </div>
       )}
-      <Handle type="source" position={Position.Right} className="!size-1.5 !bg-primary/40 !cursor-default" />
+      <Handle
+        type="source"
+        position={Position.Right}
+        className="!size-1.5 !bg-zinc-500/40 !cursor-default"
+      />
     </div>
   );
 }
 
-function ArrayNode({ id, data }: NodeProps<Node<{ label: string; itemCount?: number; hasChildren?: boolean; jsonPath?: string }>>) {
+function ArrayNode({
+  id,
+  data,
+}: NodeProps<
+  Node<{
+    label: string;
+    itemCount?: number;
+    hasChildren?: boolean;
+    jsonPath?: string;
+  }>
+>) {
   const highlighted = useIsHighlighted(id);
   const { onDelete, onAdd } = useContext(GraphContext);
-  const dimClass = highlighted === false ? "opacity-30" : "";
-  const ringClass = highlighted === true ? "ring-2 ring-primary" : "";
-  const isRoot = data.jsonPath === "$";
+  const dimClass = highlighted === false ? 'opacity-30' : '';
+  const ringClass = highlighted === true ? 'ring-2 ring-primary' : '';
+  const isRoot = data.jsonPath === '$';
   return (
-    <div className={`min-w-[150px] rounded-lg border border-border/60 bg-card shadow-md dark:border-white/10 dark:bg-zinc-900 ${dimClass} ${ringClass}`}>
-      <Handle type="target" position={Position.Left} className="!size-1.5 !bg-primary/40 !cursor-default" />
+    <div
+      className={`min-w-[150px] rounded-lg border border-border/60 bg-card shadow-md dark:border-white/10 dark:bg-zinc-900 ${dimClass} ${ringClass}`}
+    >
+      <Handle
+        type="target"
+        position={Position.Left}
+        className="!size-1.5 !bg-zinc-500/40 !cursor-default"
+      />
       <div className="flex items-center rounded-t-lg border-b border-border/60 bg-teal-500/10 px-3 py-1.5 text-xs font-semibold text-teal-600 dark:border-white/10 dark:bg-teal-500/20 dark:text-teal-400">
         <div className="flex-1 min-w-0">
           <EditableLabel label={data.label} isRoot={isRoot} />
         </div>
         <div className="ml-auto flex items-center gap-0.5">
-          {data.jsonPath && data.jsonPath !== "$" && (
+          {data.jsonPath && data.jsonPath !== '$' && (
             <button
-              onClick={(e) => { e.stopPropagation(); onDelete(data.jsonPath!); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(data.jsonPath!);
+              }}
               className="shrink-0 rounded p-0.5 text-teal-600/50 hover:text-destructive hover:bg-destructive/10 dark:text-teal-400/50"
             >
               <Trash2 className="size-3" />
@@ -340,39 +556,64 @@ function ArrayNode({ id, data }: NodeProps<Node<{ label: string; itemCount?: num
       {data.jsonPath && (
         <div className="border-t border-border/60 dark:border-white/10 px-3 py-1">
           <button
-            onClick={(e) => { e.stopPropagation(); onAdd(data.jsonPath!, true); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onAdd(data.jsonPath!, true);
+            }}
             className="nodrag flex items-center gap-1 text-[10px] text-muted-foreground hover:text-teal-600 dark:hover:text-teal-400"
           >
             <Plus className="size-2.5" /> Add item
           </button>
         </div>
       )}
-      <Handle type="source" position={Position.Right} className="!size-1.5 !bg-primary/40 !cursor-default" />
+      <Handle
+        type="source"
+        position={Position.Right}
+        className="!size-1.5 !bg-zinc-500/40 !cursor-default"
+      />
     </div>
   );
 }
 
-function ValueNode({ id, data }: NodeProps<Node<{ label: string; value?: string; valueType?: string; jsonPath?: string }>>) {
+function ValueNode({
+  id,
+  data,
+}: NodeProps<
+  Node<{ label: string; value?: string; valueType?: string; jsonPath?: string }>
+>) {
   const highlighted = useIsHighlighted(id);
   const { onDelete } = useContext(GraphContext);
-  const dimClass = highlighted === false ? "opacity-30" : "";
-  const ringClass = highlighted === true ? "ring-2 ring-primary" : "";
+  const dimClass = highlighted === false ? 'opacity-30' : '';
+  const ringClass = highlighted === true ? 'ring-2 ring-primary' : '';
   return (
-    <div className={`min-w-[120px] max-w-[320px] rounded-lg border border-border/60 bg-card shadow-md dark:border-white/10 dark:bg-zinc-900 ${dimClass} ${ringClass}`}>
-      <Handle type="target" position={Position.Left} className="!size-1.5 !bg-primary/40 !cursor-default" />
+    <div
+      className={`min-w-[120px] max-w-[320px] rounded-lg border border-border/60 bg-card shadow-md dark:border-white/10 dark:bg-zinc-900 ${dimClass} ${ringClass}`}
+    >
+      <Handle
+        type="target"
+        position={Position.Left}
+        className="!size-1.5 !bg-zinc-500/40 !cursor-default"
+      />
       <div className="px-3 py-1.5">
         <div className="flex items-center justify-between">
           <div className="text-[10px] text-muted-foreground">{data.label}</div>
-          {data.jsonPath && data.jsonPath !== "$" && (
+          {data.jsonPath && data.jsonPath !== '$' && (
             <button
-              onClick={(e) => { e.stopPropagation(); onDelete(data.jsonPath!); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(data.jsonPath!);
+              }}
               className="nodrag shrink-0 rounded p-0.5 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10"
             >
               <Trash2 className="size-2.5" />
             </button>
           )}
         </div>
-        <EditableValue value={data.value ?? ""} className={`text-xs ${getValueColor(data.valueType ?? "")}`} path={data.jsonPath ?? ""} />
+        <EditableValue
+          value={data.value ?? ''}
+          className={`text-xs ${getValueColor(data.valueType ?? '')}`}
+          path={data.jsonPath ?? ''}
+        />
       </div>
     </div>
   );
@@ -385,7 +626,7 @@ const nodeTypes = {
 };
 
 const defaultEdgeOptions = {
-  type: "smoothstep" as const,
+  type: 'smoothstep' as const,
   style: { strokeWidth: 1.5 },
   markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16 },
 };
@@ -401,12 +642,12 @@ function parseDisplayValue(display: string): unknown {
   if (display.startsWith('"') && display.endsWith('"')) {
     return display.slice(1, -1);
   }
-  if (display === "null") return null;
-  if (display === "true") return true;
-  if (display === "false") return false;
-  if (display === "undefined") return undefined;
+  if (display === 'null') return null;
+  if (display === 'true') return true;
+  if (display === 'false') return false;
+  if (display === 'undefined') return undefined;
   const num = Number(display);
-  if (!isNaN(num) && display.trim() !== "") return num;
+  if (!isNaN(num) && display.trim() !== '') return num;
   // Treat as string if nothing else matches
   return display;
 }
@@ -422,42 +663,68 @@ export function GraphView({ data }: GraphViewProps) {
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const onEditValue = useCallback((path: string, rawValue: string) => {
-    if (!path) return;
-    const value = parseDisplayValue(rawValue);
-    updateValueAtPath(path, value);
-  }, [updateValueAtPath]);
+  const onEditValue = useCallback(
+    (path: string, rawValue: string) => {
+      if (!path) return;
+      const value = parseDisplayValue(rawValue);
+      updateValueAtPath(path, value);
+    },
+    [updateValueAtPath],
+  );
 
-  const onDelete = useCallback((path: string) => {
-    if (!path || path === "$") return;
-    storeDeleteAtPath(path);
-  }, [storeDeleteAtPath]);
+  const onDelete = useCallback(
+    (path: string) => {
+      if (!path || path === '$') return;
+      storeDeleteAtPath(path);
+    },
+    [storeDeleteAtPath],
+  );
 
-  const onAdd = useCallback((path: string, isArray: boolean) => {
-    if (!path) return;
-    if (isArray) {
-      storeAddAtPath(path, "", null);
-    } else {
-      storeAddAtPath(path, "newKey", null);
-    }
-  }, [storeAddAtPath]);
+  const onAdd = useCallback(
+    (path: string, isArray: boolean) => {
+      if (!path) return;
+      if (isArray) {
+        storeAddAtPath(path, '', null);
+      } else {
+        storeAddAtPath(path, 'newKey', null);
+      }
+    },
+    [storeAddAtPath],
+  );
 
   const storeBulkRenameKey = useParsleyStore((s) => s.bulkRenameKey);
+  const storeBulkDeleteKey = useParsleyStore((s) => s.bulkDeleteKey);
 
-  const onRenameKey = useCallback((path: string, newKey: string) => {
-    if (!path) return;
-    storeRenameKeyAtPath(path, newKey);
-  }, [storeRenameKeyAtPath]);
+  const onRenameKey = useCallback(
+    (path: string, newKey: string) => {
+      if (!path) return;
+      storeRenameKeyAtPath(path, newKey);
+    },
+    [storeRenameKeyAtPath],
+  );
 
-  const onBulkRenameKey = useCallback((oldKey: string, newKey: string) => {
-    storeBulkRenameKey(oldKey, newKey);
-  }, [storeBulkRenameKey]);
+  const onBulkRenameKey = useCallback(
+    (oldKey: string, newKey: string) => {
+      storeBulkRenameKey(oldKey, newKey);
+    },
+    [storeBulkRenameKey],
+  );
 
-  const onRenameRoot = useCallback((name: string) => {
-    setRootName(name);
-  }, [setRootName]);
+  const onBulkDeleteKey = useCallback(
+    (key: string) => {
+      storeBulkDeleteKey(key);
+    },
+    [storeBulkDeleteKey],
+  );
+
+  const onRenameRoot = useCallback(
+    (name: string) => {
+      setRootName(name);
+    },
+    [setRootName],
+  );
 
   const toggleCollapse = useCallback((nodeId: string) => {
     setCollapsedIds((prev) => {
@@ -486,13 +753,20 @@ export function GraphView({ data }: GraphViewProps) {
     if (nodes.length > MAX_GRAPH_NODES) {
       const truncatedNodes = nodes.slice(0, MAX_GRAPH_NODES);
       const nodeIds = new Set(truncatedNodes.map((n) => n.id));
-      return { allNodes: truncatedNodes, allEdges: edges.filter((e) => nodeIds.has(e.source) && nodeIds.has(e.target)), isTruncated: nodes.length };
+      return {
+        allNodes: truncatedNodes,
+        allEdges: edges.filter(
+          (e) => nodeIds.has(e.source) && nodeIds.has(e.target),
+        ),
+        isTruncated: nodes.length,
+      };
     }
     return { allNodes: nodes, allEdges: edges, isTruncated: 0 };
   }, [data, rootName]);
 
   const { computedNodes, computedEdges } = useMemo(() => {
-    if (collapsedIds.size === 0) return { computedNodes: allNodes, computedEdges: allEdges };
+    if (collapsedIds.size === 0)
+      return { computedNodes: allNodes, computedEdges: allEdges };
 
     // Build parent->children map
     const childrenMap = new Map<string, string[]>();
@@ -552,7 +826,8 @@ export function GraphView({ data }: GraphViewProps) {
     <div className="h-full w-full relative">
       {isTruncated > 0 && (
         <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 rounded-md border bg-card px-3 py-1.5 text-xs text-muted-foreground shadow-sm">
-          Showing {MAX_GRAPH_NODES} of {isTruncated.toLocaleString()} nodes. Use Text view for full data.
+          Showing {MAX_GRAPH_NODES} of {isTruncated.toLocaleString()} nodes. Use
+          Text view for full data.
         </div>
       )}
       <div className="absolute top-2 right-2 z-10">
@@ -567,15 +842,33 @@ export function GraphView({ data }: GraphViewProps) {
           />
           {searchQuery && (
             <>
-              <span className="text-[10px] text-muted-foreground">{highlightedIds.size} found</span>
-              <button onClick={() => setSearchQuery("")} className="text-muted-foreground hover:text-foreground">
+              <span className="text-[10px] text-muted-foreground">
+                {highlightedIds.size} found
+              </span>
+              <button
+                onClick={() => setSearchQuery('')}
+                className="text-muted-foreground hover:text-foreground"
+              >
                 <X className="size-3" />
               </button>
             </>
           )}
         </div>
       </div>
-      <GraphContext.Provider value={{ collapsedIds, toggleCollapse, highlightedIds, onEditValue, onDelete, onAdd, onRenameKey, onBulkRenameKey, onRenameRoot }}>
+      <GraphContext.Provider
+        value={{
+          collapsedIds,
+          toggleCollapse,
+          highlightedIds,
+          onEditValue,
+          onDelete,
+          onBulkDeleteKey,
+          onAdd,
+          onRenameKey,
+          onBulkRenameKey,
+          onRenameRoot,
+        }}
+      >
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -604,7 +897,11 @@ export function GraphView({ data }: GraphViewProps) {
             onClick={handleCopyPath}
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
-            {copied ? <Check className="size-3.5 text-emerald-500" /> : <Copy className="size-3.5" />}
+            {copied ? (
+              <Check className="size-3.5 text-emerald-500" />
+            ) : (
+              <Copy className="size-3.5" />
+            )}
           </button>
         </div>
       )}

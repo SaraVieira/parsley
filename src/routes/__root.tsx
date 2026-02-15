@@ -1,15 +1,15 @@
-import { TanStackDevtools } from "@tanstack/react-devtools";
-import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
-import { createRootRoute, HeadContent, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { TanStackDevtools } from '@tanstack/react-devtools';
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
+import { createRootRoute, HeadContent, Outlet } from '@tanstack/react-router';
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { Layout } from "@/lib/layout";
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { Layout } from '@/lib/layout';
 
-const title = "Parsley";
-const description = "app starter template";
-const url = "https://parsley.dotenv.dev";
-const ogImgUrl = "";
+const title = 'Parsley';
+const description = 'app starter template';
+const url = 'https://parsley.dotenv.dev';
+const ogImgUrl = '';
 
 export const Route = createRootRoute({
   head: () => ({
@@ -18,94 +18,94 @@ export const Route = createRootRoute({
         title,
       },
       {
-        name: "description",
+        name: 'description',
         content: description,
       },
       {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1.0",
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1.0',
       },
       {
-        name: "application-name",
+        name: 'application-name',
         content: title,
       },
       {
-        name: "apple-mobile-web-app-capable",
-        content: "yes",
+        name: 'apple-mobile-web-app-capable',
+        content: 'yes',
       },
       {
-        name: "apple-mobile-web-app-status-bar-style",
-        content: "default",
+        name: 'apple-mobile-web-app-status-bar-style',
+        content: 'default',
       },
       {
-        name: "apple-mobile-web-app-title",
+        name: 'apple-mobile-web-app-title',
         content: title,
       },
       {
-        name: "format-detection",
-        content: "telephone=no",
+        name: 'format-detection',
+        content: 'telephone=no',
       },
       {
-        name: "mobile-web-app-capable",
-        content: "yes",
+        name: 'mobile-web-app-capable',
+        content: 'yes',
       },
       {
-        name: "theme-color",
-        content: "#000000",
+        name: 'theme-color',
+        content: '#000000',
       },
       {
-        name: "og:type",
-        content: "website",
+        name: 'og:type',
+        content: 'website',
       },
       {
-        name: "og:url",
+        name: 'og:url',
         content: url,
       },
       {
-        name: "og:title",
+        name: 'og:title',
         content: title,
       },
       {
-        name: "og:description",
+        name: 'og:description',
         content: description,
       },
       {
-        name: "og:image",
+        name: 'og:image',
         content: ogImgUrl,
       },
       {
-        name: "twitter:card",
-        content: "summary_large_image",
+        name: 'twitter:card',
+        content: 'summary_large_image',
       },
       {
-        name: "twitter:url",
+        name: 'twitter:url',
         content: url,
       },
       {
-        name: "twitter:title",
+        name: 'twitter:title',
         content: title,
       },
       {
-        name: "twitter:description",
+        name: 'twitter:description',
         content: description,
       },
       {
-        name: "twitter:image",
+        name: 'twitter:image',
         content: ogImgUrl,
       },
     ],
     links: [
       {
-        rel: "icon",
-        href: "/favicon.ico",
+        rel: 'icon',
+        href: '/favicon.ico',
       },
       {
-        rel: "apple-touch-icon",
-        href: "/apple-touch-icon-180x180.png",
+        rel: 'apple-touch-icon',
+        href: '/apple-touch-icon-180x180.png',
       },
       {
-        rel: "manifest",
-        href: "/manifest.webmanifest",
+        rel: 'manifest',
+        href: '/manifest.webmanifest',
       },
     ],
   }),
@@ -120,11 +120,11 @@ export const Route = createRootRoute({
       <TanStackDevtools
         plugins={[
           {
-            name: "TanStack Router",
+            name: 'TanStack Router',
             render: <TanStackRouterDevtoolsPanel />,
           },
           {
-            name: "TanStack Query",
+            name: 'TanStack Query',
             render: <ReactQueryDevtoolsPanel />,
           },
         ]}

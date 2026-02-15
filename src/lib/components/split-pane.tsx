@@ -1,9 +1,10 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
+
 import {
-  ResizablePanelGroup,
-  ResizablePanel,
   ResizableHandle,
-} from "@/components/ui/resizable";
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@/components/ui/resizable';
 
 type SplitPaneProps = {
   left: ReactNode;

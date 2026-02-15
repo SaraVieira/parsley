@@ -1,4 +1,4 @@
-import type { Node, Edge } from "@xyflow/react";
+import type { Edge, Node } from '@xyflow/react';
 
 const NODE_WIDTH = 250;
 const NODE_HEIGHT_BASE = 40;
@@ -24,22 +24,26 @@ type LayoutResult = {
 };
 
 function getValueDisplay(value: unknown): { display: string; type: string } {
-  if (value === null) return { display: "null", type: "null" };
-  if (value === undefined) return { display: "undefined", type: "undefined" };
-  if (typeof value === "string") return { display: `"${value}"`, type: "string" };
-  if (typeof value === "number") return { display: String(value), type: "number" };
-  if (typeof value === "boolean") return { display: String(value), type: "boolean" };
-  if (Array.isArray(value)) return { display: `Array(${value.length})`, type: "array" };
-  return { display: "Object", type: "object" };
+  if (value === null) return { display: 'null', type: 'null' };
+  if (value === undefined) return { display: 'undefined', type: 'undefined' };
+  if (typeof value === 'string')
+    return { display: `"${value}"`, type: 'string' };
+  if (typeof value === 'number')
+    return { display: String(value), type: 'number' };
+  if (typeof value === 'boolean')
+    return { display: String(value), type: 'boolean' };
+  if (Array.isArray(value))
+    return { display: `Array(${value.length})`, type: 'array' };
+  return { display: 'Object', type: 'object' };
 }
 
 function isPrimitive(value: unknown): boolean {
   return (
     value === null ||
     value === undefined ||
-    typeof value === "string" ||
-    typeof value === "number" ||
-    typeof value === "boolean"
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean'
   );
 }
 
@@ -50,7 +54,7 @@ function buildGraph(
   x: number,
   y: number,
   idCounter: { current: number },
-  jsonPath: string = "$",
+  jsonPath: string = '$',
 ): LayoutResult {
   const nodes: Node<NodeData>[] = [];
   const edges: Edge[] = [];
@@ -60,7 +64,7 @@ function buildGraph(
     const { display, type } = getValueDisplay(data);
     const node: Node<NodeData> = {
       id: nodeId,
-      type: "valueNode",
+      type: 'valueNode',
       position: { x, y },
       data: { label: key, value: display, valueType: type, jsonPath },
     };
@@ -78,9 +82,14 @@ function buildGraph(
   if (Array.isArray(data)) {
     const node: Node<NodeData> = {
       id: nodeId,
-      type: "arrayNode",
+      type: 'arrayNode',
       position: { x, y },
-      data: { label: key, itemCount: data.length, jsonPath, hasChildren: data.length > 0 },
+      data: {
+        label: key,
+        itemCount: data.length,
+        jsonPath,
+        hasChildren: data.length > 0,
+      },
     };
     nodes.push(node);
     if (parentId) {
@@ -116,9 +125,13 @@ function buildGraph(
     return { nodes, edges, height: totalHeight };
   }
 
-  if (typeof data === "object" && data !== null) {
+  if (typeof data === 'object' && data !== null) {
     const entries = Object.entries(data);
-    const primitiveEntries: Array<{ key: string; value: string; type: string }> = [];
+    const primitiveEntries: Array<{
+      key: string;
+      value: string;
+      type: string;
+    }> = [];
     const complexEntries: Array<[string, unknown]> = [];
 
     for (const [k, v] of entries) {
@@ -135,9 +148,14 @@ function buildGraph(
 
     const node: Node<NodeData> = {
       id: nodeId,
-      type: "objectNode",
+      type: 'objectNode',
       position: { x, y },
-      data: { label: key, entries: primitiveEntries, jsonPath, hasChildren: complexEntries.length > 0 },
+      data: {
+        label: key,
+        entries: primitiveEntries,
+        jsonPath,
+        hasChildren: complexEntries.length > 0,
+      },
     };
     nodes.push(node);
     if (parentId) {
@@ -152,8 +170,18 @@ function buildGraph(
     const childX = x + NODE_WIDTH + HORIZONTAL_GAP;
 
     for (const [k, v] of complexEntries) {
-      const childPath = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(k) ? `${jsonPath}.${k}` : `${jsonPath}["${k}"]`;
-      const childResult = buildGraph(v, k, nodeId, childX, childY, idCounter, childPath);
+      const childPath = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(k)
+        ? `${jsonPath}.${k}`
+        : `${jsonPath}["${k}"]`;
+      const childResult = buildGraph(
+        v,
+        k,
+        nodeId,
+        childX,
+        childY,
+        idCounter,
+        childPath,
+      );
       nodes.push(...childResult.nodes);
       edges.push(...childResult.edges);
       childY += childResult.height + VERTICAL_GAP;
@@ -166,7 +194,10 @@ function buildGraph(
   return { nodes, edges, height: 0 };
 }
 
-export function jsonToGraph(data: unknown, rootLabel = "root"): {
+export function jsonToGraph(
+  data: unknown,
+  rootLabel = 'root',
+): {
   nodes: Node<NodeData>[];
   edges: Edge[];
 } {

@@ -1,24 +1,26 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
 import {
-  executeTransformCode,
   type ConsoleEntry,
-} from "@/lib/utils/json-executor";
+  executeTransformCode,
+} from '@/lib/utils/json-executor';
 import {
-  setValueAtPath,
+  addAtPath,
+  bulkDeleteKey,
+  bulkRenameKey,
   deleteAtPath,
   renameKeyAtPath,
-  addAtPath,
-  bulkRenameKey,
-} from "@/lib/utils/json-path";
+  setValueAtPath,
+} from '@/lib/utils/json-path';
 
 const SAMPLE_JSON = JSON.stringify(
   {
     users: [
-      { id: 1, name: "Alice", age: 30, role: "admin" },
-      { id: 2, name: "Bob", age: 25, role: "user" },
-      { id: 3, name: "Charlie", age: 35, role: "user" },
-      { id: 4, name: "Diana", age: 28, role: "admin" },
+      { id: 1, name: 'Alice', age: 30, role: 'admin' },
+      { id: 2, name: 'Bob', age: 25, role: 'user' },
+      { id: 3, name: 'Charlie', age: 35, role: 'user' },
+      { id: 4, name: 'Diana', age: 28, role: 'admin' },
     ],
     metadata: {
       total: 4,
@@ -35,12 +37,14 @@ const SAMPLE_TRANSFORM = `// 'data' is your parsed JSON, '_' is lodash
 
 return _.filter(data.users, u => u.role > "user")`;
 
-type ViewMode = "graph" | "text" | "types" | "diff" | "table";
+type ViewMode = 'graph' | 'tree' | 'types' | 'diff' | 'table';
 
 type HistoryEntry = {
   transformedJson: unknown;
   transformCode: string;
 };
+
+type EditorTab = 'json' | 'transform';
 
 type ParsleyState = {
   jsonInput: string;
@@ -50,6 +54,7 @@ type ParsleyState = {
   transformError: string | null;
   transformedJson: unknown;
   viewMode: ViewMode;
+  editorTab: EditorTab;
   history: HistoryEntry[];
   rootName: string;
   consoleLogs: ConsoleEntry[];
@@ -68,6 +73,8 @@ type ParsleyActions = {
   renameKeyAtPath: (path: string, newKey: string) => void;
   addAtPath: (path: string, key: string, value: unknown) => void;
   bulkRenameKey: (oldKey: string, newKey: string) => void;
+  bulkDeleteKey: (key: string) => void;
+  setEditorTab: (tab: EditorTab) => void;
   setRootName: (name: string) => void;
   clearConsoleLogs: () => void;
   setAutoRun: (autoRun: boolean) => void;
@@ -78,9 +85,9 @@ export type ParsleyStore = ParsleyState & ParsleyActions;
 const initialParsedJson = JSON.parse(SAMPLE_JSON);
 
 // Pre-seed localStorage from share URL before store initialization
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   const hash = window.location.hash;
-  if (hash.startsWith("#share=")) {
+  if (hash.startsWith('#share=')) {
     try {
       const encoded = hash.slice(7);
       const payload = JSON.parse(decodeURIComponent(escape(atob(encoded))));
@@ -89,10 +96,10 @@ if (typeof window !== "undefined") {
         if (payload.j) state.jsonInput = payload.j;
         if (payload.t) state.transformCode = payload.t;
         localStorage.setItem(
-          "parsley-store",
+          'parsley-store',
           JSON.stringify({ state, version: 0 }),
         );
-        window.history.replaceState(null, "", window.location.pathname);
+        window.history.replaceState(null, '', window.location.pathname);
       }
     } catch {
       // Invalid share link, ignore
@@ -109,9 +116,10 @@ export const useParsleyStore = create<ParsleyStore>()(
       transformCode: SAMPLE_TRANSFORM,
       transformError: null,
       transformedJson: initialParsedJson,
-      viewMode: "graph",
+      viewMode: 'graph',
+      editorTab: 'json',
       history: [],
-      rootName: "Root",
+      rootName: 'Root',
       consoleLogs: [],
       autoRun: false,
 
@@ -128,7 +136,7 @@ export const useParsleyStore = create<ParsleyStore>()(
         } catch (e) {
           set({
             jsonInput: input,
-            jsonError: e instanceof Error ? e.message : "Invalid JSON",
+            jsonError: e instanceof Error ? e.message : 'Invalid JSON',
           });
         }
       },
@@ -168,6 +176,10 @@ export const useParsleyStore = create<ParsleyStore>()(
         set({ viewMode: mode });
       },
 
+      setEditorTab: (tab: EditorTab) => {
+        set({ editorTab: tab });
+      },
+
       revert: () => {
         const { history } = get();
         if (history.length === 0) return;
@@ -189,9 +201,9 @@ export const useParsleyStore = create<ParsleyStore>()(
           transformCode: SAMPLE_TRANSFORM,
           transformError: null,
           transformedJson: initialParsedJson,
-          viewMode: "graph",
+          viewMode: 'graph',
           history: [],
-          rootName: "Root",
+          rootName: 'Root',
           consoleLogs: [],
           autoRun: false,
         });
@@ -262,6 +274,19 @@ export const useParsleyStore = create<ParsleyStore>()(
         });
       },
 
+      bulkDeleteKey: (key: string) => {
+        const { parsedJson } = get();
+        const updated = bulkDeleteKey(parsedJson, key);
+        const newInput = JSON.stringify(updated, null, 2);
+        set({
+          jsonInput: newInput,
+          parsedJson: updated,
+          jsonError: null,
+          transformedJson: updated,
+          transformError: null,
+        });
+      },
+
       setRootName: (name: string) => {
         set({ rootName: name });
       },
@@ -275,7 +300,7 @@ export const useParsleyStore = create<ParsleyStore>()(
       },
     }),
     {
-      name: "parsley-store",
+      name: 'parsley-store',
       partialize: (state) => ({
         jsonInput: state.jsonInput,
         transformCode: state.transformCode,
@@ -289,7 +314,7 @@ export const useParsleyStore = create<ParsleyStore>()(
           state.transformedJson = parsed;
           state.jsonError = null;
         } catch (e) {
-          state.jsonError = e instanceof Error ? e.message : "Invalid JSON";
+          state.jsonError = e instanceof Error ? e.message : 'Invalid JSON';
         }
       },
     },

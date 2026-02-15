@@ -1,12 +1,13 @@
-import { useMemo } from "react";
-import { DiffEditor } from "@monaco-editor/react";
-import { useResolvedTheme } from "@/lib/hooks/use-resolved-theme";
-import { EditorLoading } from "@/lib/components/editor-loading";
-import { useParsleyStore } from "@/lib/stores/parsley-store";
+import { DiffEditor } from '@monaco-editor/react';
+import { useMemo } from 'react';
+
+import { EditorLoading } from '@/lib/components/editor-loading';
+import { useResolvedTheme } from '@/lib/hooks/use-resolved-theme';
+import { useParsleyStore } from '@/lib/stores/parsley-store';
 
 export function DiffView() {
   const resolvedTheme = useResolvedTheme();
-  const monacoTheme = resolvedTheme === "dark" ? "vs-dark" : "light";
+  const monacoTheme = resolvedTheme === 'dark' ? 'vs-dark' : 'light';
   const parsedJson = useParsleyStore((s) => s.parsedJson);
   const transformedJson = useParsleyStore((s) => s.transformedJson);
 

@@ -8,16 +8,16 @@
 
 body {
   @apply m-0;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family:
-    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: "JetBrains Mono", source-code-pro, Menlo, Monaco, Consolas,
+    "Courier New", monospace;
 }
 
 @layer base {
@@ -200,41 +200,41 @@ code {
 
 .dark {
   --background:
-    oklch(0.141 0.005 285.823);
+    #09090b;
   --foreground:
-    oklch(0.985 0 0);
+    #f4f4f5;
   --card:
-    oklch(0.21 0.006 285.885);
+    #18181b;
   --card-foreground:
-    oklch(0.985 0 0);
+    #f4f4f5;
   --popover:
-    oklch(0.21 0.006 285.885);
+    #18181b;
   --popover-foreground:
-    oklch(0.985 0 0);
+    #f4f4f5;
   --primary:
-    oklch(0.92 0.004 286.32);
+    #10b981;
   --primary-foreground:
-    oklch(0.21 0.006 285.885);
+    #ffffff;
   --secondary:
-    oklch(0.274 0.006 286.033);
+    #27272a;
   --secondary-foreground:
-    oklch(0.985 0 0);
+    #f4f4f5;
   --muted:
-    oklch(0.274 0.006 286.033);
+    #27272a;
   --muted-foreground:
-    oklch(0.705 0.015 286.067);
+    #71717a;
   --accent:
-    oklch(0.274 0.006 286.033);
+    #27272a;
   --accent-foreground:
-    oklch(0.985 0 0);
+    #f4f4f5;
   --destructive:
     oklch(0.704 0.191 22.216);
   --border:
-    oklch(1 0 0 / 10%);
+    #1a1a22;
   --input:
-    oklch(1 0 0 / 15%);
+    #1a1a22;
   --ring:
-    oklch(0.552 0.016 285.938);
+    #10b981;
   --chart-1:
     oklch(0.488 0.243 264.376);
   --chart-2:
@@ -246,21 +246,21 @@ code {
   --chart-5:
     oklch(0.645 0.246 16.439);
   --sidebar:
-    oklch(0.21 0.006 285.885);
+    #0f0f12;
   --sidebar-foreground:
-    oklch(0.985 0 0);
+    #f4f4f5;
   --sidebar-primary:
-    oklch(0.488 0.243 264.376);
+    #10b981;
   --sidebar-primary-foreground:
-    oklch(0.985 0 0);
+    #ffffff;
   --sidebar-accent:
-    oklch(0.274 0.006 286.033);
+    #2c2c30;
   --sidebar-accent-foreground:
-    oklch(0.985 0 0);
+    #f4f4f5;
   --sidebar-border:
-    oklch(1 0 0 / 10%);
+    #1a1a22;
   --sidebar-ring:
-    oklch(0.552 0.016 285.938);
+    #10b981;
 }
 
 @layer base {

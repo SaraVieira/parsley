@@ -1,7 +1,8 @@
-import { useMemo } from "react";
-import Editor from "@monaco-editor/react";
-import { useResolvedTheme } from "@/lib/hooks/use-resolved-theme";
-import { EditorLoading } from "@/lib/components/editor-loading";
+import Editor from '@monaco-editor/react';
+import { useMemo } from 'react';
+
+import { EditorLoading } from '@/lib/components/editor-loading';
+import { useResolvedTheme } from '@/lib/hooks/use-resolved-theme';
 
 type TextViewProps = {
   data: unknown;
@@ -9,7 +10,7 @@ type TextViewProps = {
 
 export function TextView({ data }: TextViewProps) {
   const resolvedTheme = useResolvedTheme();
-  const monacoTheme = resolvedTheme === "dark" ? "vs-dark" : "light";
+  const monacoTheme = resolvedTheme === 'dark' ? 'vs-dark' : 'light';
 
   const text = useMemo(() => {
     try {
@@ -29,9 +30,9 @@ export function TextView({ data }: TextViewProps) {
         readOnly: true,
         minimap: { enabled: false },
         fontSize: 13,
-        lineNumbers: "on",
+        lineNumbers: 'on',
         scrollBeyondLastLine: false,
-        wordWrap: "on",
+        wordWrap: 'on',
         automaticLayout: true,
         tabSize: 2,
       }}

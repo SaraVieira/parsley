@@ -1,12 +1,13 @@
-import { useMemo, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown } from 'lucide-react';
+import { useMemo, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dropdown-menu';
 
 type TableViewProps = {
   data: unknown;
@@ -18,31 +19,52 @@ type ArrayPath = {
   length: number;
 };
 
-function findArrayPaths(data: unknown, path: string = "$", results: ArrayPath[] = []): ArrayPath[] {
+function findArrayPaths(
+  data: unknown,
+  path: string = '$',
+  results: ArrayPath[] = [],
+): ArrayPath[] {
   if (Array.isArray(data)) {
-    const hasObjects = data.some((item) => typeof item === "object" && item !== null && !Array.isArray(item));
+    const hasObjects = data.some(
+      (item) =>
+        typeof item === 'object' && item !== null && !Array.isArray(item),
+    );
     if (hasObjects) {
-      const label = path === "$" ? "root" : path.replace(/^\$\.?/, "");
+      const label = path === '$' ? 'root' : path.replace(/^\$\.?/, '');
       results.push({ path, label, length: data.length });
     }
     // Also look inside array items for nested arrays
     for (let i = 0; i < Math.min(data.length, 1); i++) {
-      if (typeof data[i] === "object" && data[i] !== null && !Array.isArray(data[i])) {
+      if (
+        typeof data[i] === 'object' &&
+        data[i] !== null &&
+        !Array.isArray(data[i])
+      ) {
         const obj = data[i] as Record<string, unknown>;
         for (const [key, value] of Object.entries(obj)) {
           if (Array.isArray(value)) {
             const childPath = `${path}[*].${key}`;
-            const hasObj = value.some((v) => typeof v === "object" && v !== null && !Array.isArray(v));
+            const hasObj = value.some(
+              (v) => typeof v === 'object' && v !== null && !Array.isArray(v),
+            );
             if (hasObj) {
-              results.push({ path: childPath, label: `${path === "$" ? "" : path.replace(/^\$\.?/, "") + "."}[*].${key}`, length: value.length });
+              results.push({
+                path: childPath,
+                label: `${path === '$' ? '' : path.replace(/^\$\.?/, '') + '.'}[*].${key}`,
+                length: value.length,
+              });
             }
           }
         }
       }
     }
-  } else if (typeof data === "object" && data !== null) {
-    for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
-      const childPath = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key) ? `${path}.${key}` : `${path}["${key}"]`;
+  } else if (typeof data === 'object' && data !== null) {
+    for (const [key, value] of Object.entries(
+      data as Record<string, unknown>,
+    )) {
+      const childPath = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)
+        ? `${path}.${key}`
+        : `${path}["${key}"]`;
       findArrayPaths(value, childPath, results);
     }
   }
@@ -50,27 +72,30 @@ function findArrayPaths(data: unknown, path: string = "$", results: ArrayPath[] 
 }
 
 function getValueAtPath(data: unknown, path: string): unknown {
-  if (path === "$") return data;
+  if (path === '$') return data;
 
   const parts: string[] = [];
-  let p = path.startsWith("$") ? path.slice(1) : path;
+  let p = path.startsWith('$') ? path.slice(1) : path;
   while (p.length > 0) {
-    if (p[0] === ".") {
+    if (p[0] === '.') {
       p = p.slice(1);
       const match = p.match(/^[a-zA-Z_$][a-zA-Z0-9_$]*/);
       if (match) {
         parts.push(match[0]);
         p = p.slice(match[0].length);
       }
-    } else if (p[0] === "[") {
-      const end = p.indexOf("]");
+    } else if (p[0] === '[') {
+      const end = p.indexOf(']');
       if (end === -1) break;
       let key = p.slice(1, end);
-      if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) {
+      if (
+        (key.startsWith('"') && key.endsWith('"')) ||
+        (key.startsWith("'") && key.endsWith("'"))
+      ) {
         key = key.slice(1, -1);
       }
-      if (key === "*") {
-        parts.push("*");
+      if (key === '*') {
+        parts.push('*');
       } else {
         parts.push(key);
       }
@@ -83,7 +108,7 @@ function getValueAtPath(data: unknown, path: string): unknown {
   let current: unknown = data;
   for (const part of parts) {
     if (current === null || current === undefined) return undefined;
-    if (part === "*") {
+    if (part === '*') {
       // Flatten: collect from all array items
       if (Array.isArray(current)) {
         continue; // skip, next part will collect from items
@@ -96,13 +121,13 @@ function getValueAtPath(data: unknown, path: string): unknown {
       } else {
         // Collect property from all array items
         current = current.flatMap((item) => {
-          if (typeof item === "object" && item !== null) {
+          if (typeof item === 'object' && item !== null) {
             return (item as Record<string, unknown>)[part] ?? [];
           }
           return [];
         });
       }
-    } else if (typeof current === "object") {
+    } else if (typeof current === 'object') {
       current = (current as Record<string, unknown>)[part];
     } else {
       return undefined;
@@ -114,7 +139,7 @@ function getValueAtPath(data: unknown, path: string): unknown {
 function getColumns(data: unknown[]): string[] {
   const cols = new Set<string>();
   for (const item of data) {
-    if (typeof item === "object" && item !== null && !Array.isArray(item)) {
+    if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
       for (const key of Object.keys(item)) {
         cols.add(key);
       }
@@ -124,9 +149,9 @@ function getColumns(data: unknown[]): string[] {
 }
 
 function formatCell(value: unknown): string {
-  if (value === null) return "null";
-  if (value === undefined) return "";
-  if (typeof value === "object") return JSON.stringify(value);
+  if (value === null) return 'null';
+  if (value === undefined) return '';
+  if (typeof value === 'object') return JSON.stringify(value);
   return String(value);
 }
 
@@ -134,17 +159,18 @@ export function TableView({ data }: TableViewProps) {
   const arrayPaths = useMemo(() => findArrayPaths(data), [data]);
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
 
-  const activePath = selectedPath ?? (arrayPaths.length > 0 ? arrayPaths[0].path : null);
+  const activePath =
+    selectedPath ?? (arrayPaths.length > 0 ? arrayPaths[0].path : null);
   const activeData = activePath ? getValueAtPath(data, activePath) : data;
 
   const { rows, columns, isTableData } = useMemo(() => {
     const d = activeData;
     if (!Array.isArray(d)) {
-      if (typeof d === "object" && d !== null) {
+      if (typeof d === 'object' && d !== null) {
         const entries = Object.entries(d);
         return {
           rows: entries.map(([k, v]) => ({ key: k, value: v })),
-          columns: ["key", "value"],
+          columns: ['key', 'value'],
           isTableData: true,
         };
       }
@@ -155,10 +181,10 @@ export function TableView({ data }: TableViewProps) {
       return { rows: [], columns: [], isTableData: true };
     }
 
-    if (d.every((item) => typeof item !== "object" || item === null)) {
+    if (d.every((item) => typeof item !== 'object' || item === null)) {
       return {
         rows: d.map((item, i) => ({ index: i, value: item })),
-        columns: ["index", "value"],
+        columns: ['index', 'value'],
         isTableData: true,
       };
     }
@@ -170,7 +196,8 @@ export function TableView({ data }: TableViewProps) {
   if (!isTableData && arrayPaths.length === 0) {
     return (
       <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-        Table view works best with arrays of objects. Use Text view for this data.
+        Table view works best with arrays of objects. Use Text view for this
+        data.
       </div>
     );
   }
@@ -183,7 +210,7 @@ export function TableView({ data }: TableViewProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="xs" className="h-6 text-xs">
-                {arrayPaths.find((p) => p.path === activePath)?.label ?? "root"}
+                {arrayPaths.find((p) => p.path === activePath)?.label ?? 'root'}
                 <ChevronDown className="ml-1 size-3" />
               </Button>
             </DropdownMenuTrigger>
@@ -192,10 +219,12 @@ export function TableView({ data }: TableViewProps) {
                 <DropdownMenuItem
                   key={ap.path}
                   onClick={() => setSelectedPath(ap.path)}
-                  className={ap.path === activePath ? "bg-accent" : ""}
+                  className={ap.path === activePath ? 'bg-accent' : ''}
                 >
                   <span className="font-mono text-xs">{ap.label}</span>
-                  <span className="ml-2 text-[10px] text-muted-foreground">({ap.length} items)</span>
+                  <span className="ml-2 text-[10px] text-muted-foreground">
+                    ({ap.length} items)
+                  </span>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -238,14 +267,14 @@ export function TableView({ data }: TableViewProps) {
                         <span
                           className={
                             value === null
-                              ? "italic text-muted-foreground"
-                              : typeof value === "number"
-                                ? "text-blue-500 dark:text-blue-400"
-                                : typeof value === "boolean"
-                                  ? "text-amber-500 dark:text-amber-400"
-                                  : typeof value === "string"
-                                    ? "text-emerald-500 dark:text-emerald-400"
-                                    : ""
+                              ? 'italic text-muted-foreground'
+                              : typeof value === 'number'
+                                ? 'text-blue-500 dark:text-blue-400'
+                                : typeof value === 'boolean'
+                                  ? 'text-amber-500 dark:text-amber-400'
+                                  : typeof value === 'string'
+                                    ? 'text-emerald-500 dark:text-emerald-400'
+                                    : ''
                           }
                         >
                           {display}
@@ -258,7 +287,8 @@ export function TableView({ data }: TableViewProps) {
             </tbody>
           </table>
           <div className="border-t px-3 py-1.5 text-[10px] text-muted-foreground">
-            {rows.length} row{rows.length !== 1 ? "s" : ""} × {columns.length} column{columns.length !== 1 ? "s" : ""}
+            {rows.length} row{rows.length !== 1 ? 's' : ''} × {columns.length}{' '}
+            column{columns.length !== 1 ? 's' : ''}
           </div>
         </div>
       )}

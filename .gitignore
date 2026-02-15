@@ -3,6 +3,7 @@ node_modules
 dist
 dist-ssr
 *.local
+.playwright-mcp
 
 yarn-error.log*
 .pnpm-debug.log*
