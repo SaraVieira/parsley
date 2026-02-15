@@ -8,6 +8,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { isSimpleKey } from '@/lib/utils/shared';
+import { getValueColor } from '@/lib/utils/shared';
 
 type TableViewProps = {
   data: unknown;
@@ -62,7 +64,7 @@ function findArrayPaths(
     for (const [key, value] of Object.entries(
       data as Record<string, unknown>,
     )) {
-      const childPath = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)
+      const childPath = isSimpleKey(key)
         ? `${path}.${key}`
         : `${path}["${key}"]`;
       findArrayPaths(value, childPath, results);
@@ -116,7 +118,7 @@ function getValueAtPath(data: unknown, path: string): unknown {
     }
     if (Array.isArray(current)) {
       const idx = Number(part);
-      if (!isNaN(idx)) {
+      if (!Number.isNaN(idx)) {
         current = current[idx];
       } else {
         // Collect property from all array items
@@ -265,17 +267,9 @@ export function TableView({ data }: TableViewProps) {
                         className="whitespace-nowrap border-r border-border/20 px-3 py-1.5 text-foreground last:border-r-0"
                       >
                         <span
-                          className={
-                            value === null
-                              ? 'italic text-muted-foreground'
-                              : typeof value === 'number'
-                                ? 'text-blue-500 dark:text-blue-400'
-                                : typeof value === 'boolean'
-                                  ? 'text-amber-500 dark:text-amber-400'
-                                  : typeof value === 'string'
-                                    ? 'text-emerald-500 dark:text-emerald-400'
-                                    : ''
-                          }
+                          className={getValueColor(
+                            value === null ? 'null' : typeof value,
+                          )}
                         >
                           {display}
                         </span>

@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useParsleyStore } from '@/lib/stores/parsley-store';
 import { TRANSFORM_PRESETS } from '@/lib/utils/constants';
+import { createShareUrl } from '@/lib/utils/share-url';
 
 export function Toolbar() {
   const {
@@ -45,7 +46,6 @@ export function Toolbar() {
     executeTransform();
   }, [executeTransform]);
 
-  // Cmd+Enter shortcut
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -59,9 +59,7 @@ export function Toolbar() {
 
   const handleShare = useCallback(() => {
     try {
-      const payload = JSON.stringify({ j: jsonInput, t: transformCode });
-      const encoded = btoa(unescape(encodeURIComponent(payload)));
-      const url = `${window.location.origin}${window.location.pathname}#share=${encoded}`;
+      const url = createShareUrl(jsonInput, transformCode);
       navigator.clipboard.writeText(url);
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 2000);
@@ -127,9 +125,7 @@ export function Toolbar() {
               size="icon-xs"
               onClick={() => {
                 try {
-                  setJsonInput(
-                    JSON.stringify(JSON.parse(jsonInput), null, 2),
-                  );
+                  setJsonInput(JSON.stringify(JSON.parse(jsonInput), null, 2));
                 } catch {
                   /* invalid JSON, ignore */
                 }

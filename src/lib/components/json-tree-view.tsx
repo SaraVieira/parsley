@@ -1,6 +1,9 @@
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
+import { getValueColor } from '@/lib/utils/shared';
+import { isSimpleKey } from '@/lib/utils/shared';
+
 type JsonTreeViewProps = {
   data: unknown;
   onSelect?: (path: string, value: unknown) => void;
@@ -30,6 +33,41 @@ type TreeNodeProps = {
   defaultExpanded?: boolean;
 };
 
+function getLeafDisplay(value: unknown): { display: string; type: string } {
+  if (value === null) return { display: 'null', type: 'null' };
+  if (value === undefined) return { display: 'undefined', type: 'undefined' };
+  if (typeof value === 'string') return { display: `"${value}"`, type: 'string' };
+  if (typeof value === 'number') return { display: String(value), type: 'number' };
+  if (typeof value === 'boolean') return { display: String(value), type: 'boolean' };
+  return { display: String(value), type: 'unknown' };
+}
+
+function LeafNode({
+  keyName,
+  display,
+  colorClass,
+  depth,
+  onClick,
+}: {
+  keyName: string;
+  display: string;
+  colorClass: string;
+  depth: number;
+  onClick: (e: React.MouseEvent) => void;
+}) {
+  return (
+    <div
+      className="flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded px-1 cursor-pointer"
+      style={{ paddingLeft: depth * 16 }}
+      onClick={onClick}
+    >
+      <span className="w-4" />
+      <span className="text-muted-foreground">{keyName}:</span>
+      <span className={colorClass}>{display}</span>
+    </div>
+  );
+}
+
 function TreeNode({
   keyName,
   value,
@@ -53,77 +91,17 @@ function TreeNode({
     [path, value, onSelect],
   );
 
-  if (value === null) {
+  // Primitive values
+  if (value === null || value === undefined || typeof value !== 'object') {
+    const { display, type } = getLeafDisplay(value);
     return (
-      <div
-        className="flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded px-1 cursor-pointer"
-        style={{ paddingLeft: depth * 16 }}
+      <LeafNode
+        keyName={keyName}
+        display={display}
+        colorClass={getValueColor(type)}
+        depth={depth}
         onClick={handleClick}
-      >
-        <span className="w-4" />
-        <span className="text-muted-foreground">{keyName}:</span>
-        <span className="text-muted-foreground italic">null</span>
-      </div>
-    );
-  }
-
-  if (value === undefined) {
-    return (
-      <div
-        className="flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded px-1 cursor-pointer"
-        style={{ paddingLeft: depth * 16 }}
-        onClick={handleClick}
-      >
-        <span className="w-4" />
-        <span className="text-muted-foreground">{keyName}:</span>
-        <span className="text-muted-foreground italic">undefined</span>
-      </div>
-    );
-  }
-
-  if (typeof value === 'string') {
-    return (
-      <div
-        className="flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded px-1 cursor-pointer"
-        style={{ paddingLeft: depth * 16 }}
-        onClick={handleClick}
-      >
-        <span className="w-4" />
-        <span className="text-muted-foreground">{keyName}:</span>
-        <span className="text-emerald-500 dark:text-emerald-400 truncate max-w-[300px]">
-          "{value}"
-        </span>
-      </div>
-    );
-  }
-
-  if (typeof value === 'number') {
-    return (
-      <div
-        className="flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded px-1 cursor-pointer"
-        style={{ paddingLeft: depth * 16 }}
-        onClick={handleClick}
-      >
-        <span className="w-4" />
-        <span className="text-muted-foreground">{keyName}:</span>
-        <span className="text-blue-500 dark:text-blue-400">{value}</span>
-      </div>
-    );
-  }
-
-  if (typeof value === 'boolean') {
-    return (
-      <div
-        className="flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded px-1 cursor-pointer"
-        style={{ paddingLeft: depth * 16 }}
-        onClick={handleClick}
-      >
-        <span className="w-4" />
-        <span className="text-muted-foreground">{keyName}:</span>
-        <span className="text-amber-500 dark:text-amber-400">
-          {String(value)}
-        </span>
-      </div>
+      />
     );
   }
 
@@ -171,50 +149,46 @@ function TreeNode({
     );
   }
 
-  if (typeof value === 'object') {
-    const entries = Object.entries(value as Record<string, unknown>);
-    return (
-      <div>
-        <div
-          className="flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded px-1 cursor-pointer"
-          style={{ paddingLeft: depth * 16 }}
+  const entries = Object.entries(value as Record<string, unknown>);
+  return (
+    <div>
+      <div
+        className="flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded px-1 cursor-pointer"
+        style={{ paddingLeft: depth * 16 }}
+        onClick={toggle}
+      >
+        <button
           onClick={toggle}
+          className="w-4 shrink-0 flex items-center justify-center"
         >
-          <button
-            onClick={toggle}
-            className="w-4 shrink-0 flex items-center justify-center"
-          >
-            {expanded ? (
-              <ChevronDown className="size-3" />
-            ) : (
-              <ChevronRight className="size-3" />
-            )}
-          </button>
-          <span className="text-muted-foreground">{keyName}:</span>
-          <span className="text-primary">{`{${entries.length}}`}</span>
-        </div>
-        {expanded && (
-          <div>
-            {entries.map(([k, v]) => {
-              const childPath = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(k)
-                ? `${path}.${k}`
-                : `${path}["${k}"]`;
-              return (
-                <TreeNode
-                  key={childPath}
-                  keyName={k}
-                  value={v}
-                  path={childPath}
-                  depth={depth + 1}
-                  onSelect={onSelect}
-                />
-              );
-            })}
-          </div>
-        )}
+          {expanded ? (
+            <ChevronDown className="size-3" />
+          ) : (
+            <ChevronRight className="size-3" />
+          )}
+        </button>
+        <span className="text-muted-foreground">{keyName}:</span>
+        <span className="text-primary">{`{${entries.length}}`}</span>
       </div>
-    );
-  }
-
-  return null;
+      {expanded && (
+        <div>
+          {entries.map(([k, v]) => {
+            const childPath = isSimpleKey(k)
+              ? `${path}.${k}`
+              : `${path}["${k}"]`;
+            return (
+              <TreeNode
+                key={childPath}
+                keyName={k}
+                value={v}
+                path={childPath}
+                depth={depth + 1}
+                onSelect={onSelect}
+              />
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }

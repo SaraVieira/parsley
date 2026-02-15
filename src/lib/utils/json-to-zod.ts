@@ -1,3 +1,5 @@
+import { capitalize, isSimpleKey, mergeObjectShapes } from '@/lib/utils/shared';
+
 function inferZod(value: unknown, name: string, indent: number): string {
   if (value === null) return 'z.null()';
   if (value === undefined) return 'z.undefined()';
@@ -35,20 +37,6 @@ function inferZod(value: unknown, name: string, indent: number): string {
   return 'z.unknown()';
 }
 
-function mergeObjectShapes(objects: unknown[]): Record<string, unknown> {
-  const merged: Record<string, unknown> = {};
-  for (const obj of objects) {
-    if (typeof obj === 'object' && obj !== null) {
-      for (const [key, value] of Object.entries(obj)) {
-        if (!(key in merged)) {
-          merged[key] = value;
-        }
-      }
-    }
-  }
-  return merged;
-}
-
 function generateZodObject(
   obj: Record<string, unknown>,
   name: string,
@@ -63,7 +51,7 @@ function generateZodObject(
   const entries = Object.entries(obj);
   for (let i = 0; i < entries.length; i++) {
     const [key, value] = entries[i];
-    const safeKey = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key) ? key : `"${key}"`;
+    const safeKey = isSimpleKey(key) ? key : `"${key}"`;
     const typeName = capitalize(name) + capitalize(key);
     const schema = inferZod(value, typeName, indent + 1);
     const comma = i < entries.length - 1 ? ',' : ',';
@@ -72,10 +60,6 @@ function generateZodObject(
 
   lines.push(`${pad}})`);
   return lines.join('');
-}
-
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 export function jsonToZod(data: unknown, rootName = 'root'): string {

@@ -1,5 +1,7 @@
 import type { Edge, Node } from '@xyflow/react';
 
+import { isSimpleKey } from '@/lib/utils/shared';
+
 const NODE_WIDTH = 250;
 const NODE_HEIGHT_BASE = 40;
 const NODE_HEIGHT_PER_FIELD = 28;
@@ -170,7 +172,7 @@ function buildGraph(
     const childX = x + NODE_WIDTH + HORIZONTAL_GAP;
 
     for (const [k, v] of complexEntries) {
-      const childPath = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(k)
+      const childPath = isSimpleKey(k)
         ? `${jsonPath}.${k}`
         : `${jsonPath}["${k}"]`;
       const childResult = buildGraph(

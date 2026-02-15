@@ -1,15 +1,11 @@
-import { TanStackDevtools } from '@tanstack/react-devtools';
-import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import { createRootRoute, HeadContent, Outlet } from '@tanstack/react-router';
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Layout } from '@/lib/layout';
 
 const title = 'Parsley';
-const description = 'app starter template';
+const description = 'A browser-based JSON editor and transformer for engineers';
 const url = 'https://parsley.dotenv.dev';
-const ogImgUrl = '';
 
 export const Route = createRootRoute({
   head: () => ({
@@ -42,14 +38,6 @@ export const Route = createRootRoute({
         content: title,
       },
       {
-        name: 'format-detection',
-        content: 'telephone=no',
-      },
-      {
-        name: 'mobile-web-app-capable',
-        content: 'yes',
-      },
-      {
         name: 'theme-color',
         content: '#000000',
       },
@@ -70,10 +58,6 @@ export const Route = createRootRoute({
         content: description,
       },
       {
-        name: 'og:image',
-        content: ogImgUrl,
-      },
-      {
         name: 'twitter:card',
         content: 'summary_large_image',
       },
@@ -89,23 +73,11 @@ export const Route = createRootRoute({
         name: 'twitter:description',
         content: description,
       },
-      {
-        name: 'twitter:image',
-        content: ogImgUrl,
-      },
     ],
     links: [
       {
         rel: 'icon',
         href: '/favicon.ico',
-      },
-      {
-        rel: 'apple-touch-icon',
-        href: '/apple-touch-icon-180x180.png',
-      },
-      {
-        rel: 'manifest',
-        href: '/manifest.webmanifest',
       },
     ],
   }),
@@ -117,18 +89,6 @@ export const Route = createRootRoute({
           <Outlet />
         </Layout>
       </TooltipProvider>
-      <TanStackDevtools
-        plugins={[
-          {
-            name: 'TanStack Router',
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-          {
-            name: 'TanStack Query',
-            render: <ReactQueryDevtoolsPanel />,
-          },
-        ]}
-      />
     </>
   ),
 });

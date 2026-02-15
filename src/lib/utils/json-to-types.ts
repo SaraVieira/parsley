@@ -1,3 +1,5 @@
+import { capitalize, isSimpleKey, mergeObjectShapes } from '@/lib/utils/shared';
+
 function inferType(value: unknown, name: string, indent: number): string {
   if (value === null) return 'null';
   if (value === undefined) return 'undefined';
@@ -37,20 +39,6 @@ function inferType(value: unknown, name: string, indent: number): string {
   return 'unknown';
 }
 
-function mergeObjectShapes(objects: unknown[]): Record<string, unknown> {
-  const merged: Record<string, unknown> = {};
-  for (const obj of objects) {
-    if (typeof obj === 'object' && obj !== null) {
-      for (const [key, value] of Object.entries(obj)) {
-        if (!(key in merged)) {
-          merged[key] = value;
-        }
-      }
-    }
-  }
-  return merged;
-}
-
 function generateInterface(
   obj: Record<string, unknown>,
   name: string,
@@ -63,7 +51,7 @@ function generateInterface(
   lines.push(`{\n`);
 
   for (const [key, value] of Object.entries(obj)) {
-    const safeKey = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key) ? key : `"${key}"`;
+    const safeKey = isSimpleKey(key) ? key : `"${key}"`;
     const typeName = capitalize(name) + capitalize(key);
     const type = inferType(value, typeName, indent + 1);
     lines.push(`${innerPad}${safeKey}: ${type};\n`);
@@ -71,10 +59,6 @@ function generateInterface(
 
   lines.push(`${pad}}`);
   return lines.join('');
-}
-
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 export function jsonToTypeScript(data: unknown, rootName = 'Root'): string {

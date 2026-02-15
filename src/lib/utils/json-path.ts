@@ -1,3 +1,5 @@
+import { isSimpleKey } from '@/lib/utils/shared';
+
 /**
  * Set a value in a JSON object at the given path.
  * Path format: $.users[0].name or $["key with spaces"]
@@ -180,7 +182,7 @@ function buildPath(segments: string[]): string {
   for (const seg of segments) {
     if (/^\d+$/.test(seg)) {
       path += `[${seg}]`;
-    } else if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(seg)) {
+    } else if (isSimpleKey(seg)) {
       path += `.${seg}`;
     } else {
       path += `["${seg}"]`;
