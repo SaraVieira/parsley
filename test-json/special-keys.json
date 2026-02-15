@@ -1,8 +1,0 @@
-{
-  "normal-key": "value",
-  "key with spaces": "value",
-  "123numeric": "value",
-  "": "empty key",
-  "nested/path": "value",
-  "unicode-émoji-🎉": "party"
-}

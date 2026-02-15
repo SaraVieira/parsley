@@ -22,3 +22,6 @@ coverage/
 .output
 .vercel
 .claude
+test-results
+test-features.mjs
+test-json
