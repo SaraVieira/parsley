@@ -6,6 +6,7 @@ import {
   Download,
   FileText,
   Leaf,
+  Sheet,
   Upload,
 } from 'lucide-react';
 import { useRef, useState } from 'react';
@@ -20,6 +21,7 @@ import {
 import { PostgresImportDialog } from '@/lib/components/postgres-import-dialog';
 import { ThemeToggle } from '@/lib/components/theme-toggle';
 import { useParsleyStore } from '@/lib/stores/parsley-store';
+import { jsonToCsv } from '@/lib/utils/json-to-csv';
 import { jsonToTypeScript } from '@/lib/utils/json-to-types';
 
 export const Header = () => {
@@ -72,6 +74,18 @@ export const Header = () => {
     URL.revokeObjectURL(url);
   };
 
+  const handleExportCsv = () => {
+    const csv = jsonToCsv(transformedJson);
+    if (!csv) return;
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'data.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const handleExportTypes = () => {
     const text = jsonToTypeScript(transformedJson);
     const blob = new Blob([text], { type: 'text/typescript' });
@@ -106,6 +120,10 @@ export const Header = () => {
                 <DropdownMenuItem onClick={handleExportJson}>
                   <Download className="mr-2 size-3.5" />
                   Export JSON
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportCsv}>
+                  <Sheet className="mr-2 size-3.5" />
+                  Export CSV
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleExportTypes}>
                   <FileText className="mr-2 size-3.5" />
