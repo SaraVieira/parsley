@@ -35,7 +35,10 @@ export function hydrateFromShareUrl(): void {
 /**
  * Encode the current JSON input and transform code into a shareable URL.
  */
-export function createShareUrl(jsonInput: string, transformCode: string): string {
+export function createShareUrl(
+  jsonInput: string,
+  transformCode: string,
+): string {
   const payload = JSON.stringify({ j: jsonInput, t: transformCode });
   const encoded = btoa(unescape(encodeURIComponent(payload)));
   return `${window.location.origin}${window.location.pathname}#share=${encoded}`;

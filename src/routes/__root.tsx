@@ -1,15 +1,29 @@
-import { createRootRoute, HeadContent, Outlet } from '@tanstack/react-router';
+/// <reference types="vite/client" />
+
+import {
+  createRootRoute,
+  HeadContent,
+  Outlet,
+  Scripts,
+} from '@tanstack/react-router';
+import type { ReactNode } from 'react';
 
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Layout } from '@/lib/layout';
+
+import '@/lib/styles/globals.css';
 
 const title = 'Parsley';
 const description = 'A browser-based JSON editor and transformer for engineers';
 const url = 'https://parsley.dotenv.dev';
 
 export const Route = createRootRoute({
+  ssr: false,
   head: () => ({
     meta: [
+      {
+        charSet: 'utf-8',
+      },
       {
         title,
       },
@@ -79,16 +93,45 @@ export const Route = createRootRoute({
         rel: 'icon',
         href: '/favicon.ico',
       },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.googleapis.com',
+      },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossOrigin: 'anonymous',
+      },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap',
+      },
     ],
   }),
-  component: () => (
-    <>
-      <HeadContent />
-      <TooltipProvider delayDuration={300}>
-        <Layout>
-          <Outlet />
-        </Layout>
-      </TooltipProvider>
-    </>
-  ),
+  shellComponent: RootShell,
+  component: RootComponent,
 });
+
+function RootShell({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        {children}
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+function RootComponent() {
+  return (
+    <TooltipProvider delayDuration={300}>
+      <Layout>
+        <Outlet />
+      </Layout>
+    </TooltipProvider>
+  );
+}

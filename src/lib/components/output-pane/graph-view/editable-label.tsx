@@ -2,7 +2,13 @@ import { useContext, useState } from 'react';
 
 import { GraphContext } from './graph-context';
 
-export function EditableLabel({ label, isRoot }: { label: string; isRoot: boolean }) {
+export function EditableLabel({
+  label,
+  isRoot,
+}: {
+  label: string;
+  isRoot: boolean;
+}) {
   const { onRenameRoot } = useContext(GraphContext);
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(label);

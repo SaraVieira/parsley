@@ -51,7 +51,7 @@ export function EditableValue({
         }}
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
-        className="nodrag w-full min-w-[40px] rounded border border-primary bg-transparent px-1 text-xs outline-none"
+        className="nodrag w-full min-w-10 rounded border border-primary bg-transparent px-1 text-xs outline-none"
       />
     );
   }
@@ -67,10 +67,7 @@ export function EditableValue({
             {value.slice(0, MAX_VALUE_LENGTH)}…
           </span>
         </TooltipTrigger>
-        <TooltipContent
-          side="bottom"
-          className="max-w-[300px] break-all text-xs"
-        >
+        <TooltipContent side="bottom" className="max-w-75 break-all text-xs">
           {value}
         </TooltipContent>
       </Tooltip>

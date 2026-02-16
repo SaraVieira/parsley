@@ -15,8 +15,12 @@ import { useParsleyStore } from '@/lib/stores/parsley-store';
 import { jsonToGraph } from '@/lib/utils/json-to-graph';
 
 import { GraphContext, type NodeData } from './graph-context';
-import { defaultEdgeOptions, MAX_GRAPH_NODES, parseDisplayValue } from './graph-utils';
 import { nodeTypes } from './graph-nodes';
+import {
+  defaultEdgeOptions,
+  MAX_GRAPH_NODES,
+  parseDisplayValue,
+} from './graph-utils';
 
 type GraphViewProps = {
   data: unknown;

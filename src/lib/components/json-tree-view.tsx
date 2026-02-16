@@ -1,8 +1,7 @@
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
-import { getValueColor } from '@/lib/utils/shared';
-import { isSimpleKey } from '@/lib/utils/shared';
+import { getValueColor, isSimpleKey } from '@/lib/utils/shared';
 
 type JsonTreeViewProps = {
   data: unknown;
@@ -36,9 +35,12 @@ type TreeNodeProps = {
 function getLeafDisplay(value: unknown): { display: string; type: string } {
   if (value === null) return { display: 'null', type: 'null' };
   if (value === undefined) return { display: 'undefined', type: 'undefined' };
-  if (typeof value === 'string') return { display: `"${value}"`, type: 'string' };
-  if (typeof value === 'number') return { display: String(value), type: 'number' };
-  if (typeof value === 'boolean') return { display: String(value), type: 'boolean' };
+  if (typeof value === 'string')
+    return { display: `"${value}"`, type: 'string' };
+  if (typeof value === 'number')
+    return { display: String(value), type: 'number' };
+  if (typeof value === 'boolean')
+    return { display: String(value), type: 'boolean' };
   return { display: String(value), type: 'unknown' };
 }
 

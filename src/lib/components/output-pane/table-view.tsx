@@ -8,8 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { isSimpleKey } from '@/lib/utils/shared';
-import { getValueColor } from '@/lib/utils/shared';
+import { getValueColor, isSimpleKey } from '@/lib/utils/shared';
 
 type TableViewProps = {
   data: unknown;

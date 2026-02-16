@@ -3,7 +3,13 @@ import { useCallback, useContext, useState } from 'react';
 
 import { GraphContext } from './graph-context';
 
-export function EditableKey({ keyName, path }: { keyName: string; path: string }) {
+export function EditableKey({
+  keyName,
+  path,
+}: {
+  keyName: string;
+  path: string;
+}) {
   const { onRenameKey, onBulkRenameKey } = useContext(GraphContext);
   const [editing, setEditing] = useState(false);
   const [showChoice, setShowChoice] = useState(false);

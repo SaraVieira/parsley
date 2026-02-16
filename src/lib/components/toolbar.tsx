@@ -103,7 +103,7 @@ export function Toolbar() {
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
-              className="max-h-[300px] overflow-y-auto"
+              className="max-h-75 overflow-y-auto"
             >
               {TRANSFORM_PRESETS.map((preset) => (
                 <DropdownMenuItem

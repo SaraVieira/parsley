@@ -2,8 +2,7 @@ import { Handle, type Node, type NodeProps, Position } from '@xyflow/react';
 import { Plus, Trash2 } from 'lucide-react';
 import { useContext } from 'react';
 
-import { isSimpleKey } from '@/lib/utils/shared';
-import { getValueColor } from '@/lib/utils/shared';
+import { getValueColor, isSimpleKey } from '@/lib/utils/shared';
 
 import { CollapseToggle } from './collapse-toggle';
 import { DeleteButton } from './delete-button';
@@ -36,12 +35,12 @@ function ObjectNode({
   const isRoot = data.jsonPath === '$';
   return (
     <div
-      className={`min-w-[200px] max-w-[320px] rounded-lg border border-border/60 bg-card shadow-md dark:border-white/10 dark:bg-zinc-900 ${dimClass} ${ringClass}`}
+      className={`min-w-50 max-w-[320px] rounded-lg border border-border/60 bg-card shadow-md dark:border-white/10 dark:bg-zinc-900 ${dimClass} ${ringClass}`}
     >
       <Handle
         type="target"
         position={Position.Left}
-        className="!size-1.5 !bg-zinc-500/40 !cursor-default"
+        className="size-1.5! bg-zinc-500/40! cursor-default!"
       />
       <div className="flex items-center rounded-t-lg border-b border-border/60 bg-zinc-500/10 px-3 py-1.5 text-xs font-semibold text-zinc-300 dark:border-white/10 dark:bg-zinc-500/15">
         <div className="flex-1 min-w-0">

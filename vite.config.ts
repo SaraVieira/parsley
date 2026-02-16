@@ -1,7 +1,7 @@
 import { ValidateEnv } from '@julr/vite-plugin-validate-env';
 import tailwindcss from '@tailwindcss/vite';
 import { devtools } from '@tanstack/devtools-vite';
-import { tanstackRouter } from '@tanstack/router-plugin/vite';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import viteReact from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       ValidateEnv(),
       devtools(),
-      tanstackRouter({ autoCodeSplitting: true }),
+      tanstackStart(),
       viteReact({
         babel: {
           plugins: ['babel-plugin-react-compiler'],
@@ -54,6 +54,9 @@ export default defineConfig(({ mode }) => {
         : []),
       VitePWA(pwaOptions),
     ],
+    ssr: {
+      noExternal: ['@theme-toggles/react'],
+    },
     server: {
       open: true,
     },
