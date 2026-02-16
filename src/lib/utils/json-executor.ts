@@ -2,30 +2,30 @@ import _ from 'lodash';
 
 export type ConsoleEntry = {
   level: 'log' | 'warn' | 'error' | 'info';
-  args: unknown[];
+  args: Array<unknown>;
   timestamp: number;
 };
 
 type ExecuteResult = {
   result: unknown;
   error: string | null;
-  logs: ConsoleEntry[];
+  logs: Array<ConsoleEntry>;
 };
 
 export function executeTransformCode(
   code: string,
   jsonData: unknown,
 ): ExecuteResult {
-  const logs: ConsoleEntry[] = [];
+  const logs: Array<ConsoleEntry> = [];
 
   const mockConsole = {
-    log: (...args: unknown[]) =>
+    log: (...args: Array<unknown>) =>
       logs.push({ level: 'log', args, timestamp: Date.now() }),
-    warn: (...args: unknown[]) =>
+    warn: (...args: Array<unknown>) =>
       logs.push({ level: 'warn', args, timestamp: Date.now() }),
-    error: (...args: unknown[]) =>
+    error: (...args: Array<unknown>) =>
       logs.push({ level: 'error', args, timestamp: Date.now() }),
-    info: (...args: unknown[]) =>
+    info: (...args: Array<unknown>) =>
       logs.push({ level: 'info', args, timestamp: Date.now() }),
   };
 

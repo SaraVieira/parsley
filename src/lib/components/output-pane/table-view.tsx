@@ -10,6 +10,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { getValueColor, isSimpleKey } from '@/lib/utils/shared';
 
+const PATH_PREFIX_RE = /^\$\.?/;
+const IDENTIFIER_RE = /^[a-zA-Z_$][a-zA-Z0-9_$]*/;
+
 type TableViewProps = {
   data: unknown;
 };
@@ -20,18 +23,19 @@ type ArrayPath = {
   length: number;
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: recursive tree traversal
 function findArrayPaths(
   data: unknown,
   path: string = '$',
-  results: ArrayPath[] = [],
-): ArrayPath[] {
+  results: Array<ArrayPath> = [],
+): Array<ArrayPath> {
   if (Array.isArray(data)) {
     const hasObjects = data.some(
       (item) =>
         typeof item === 'object' && item !== null && !Array.isArray(item),
     );
     if (hasObjects) {
-      const label = path === '$' ? 'root' : path.replace(/^\$\.?/, '');
+      const label = path === '$' ? 'root' : path.replace(PATH_PREFIX_RE, '');
       results.push({ path, label, length: data.length });
     }
     // Also look inside array items for nested arrays
@@ -51,7 +55,7 @@ function findArrayPaths(
             if (hasObj) {
               results.push({
                 path: childPath,
-                label: `${path === '$' ? '' : path.replace(/^\$\.?/, '') + '.'}[*].${key}`,
+                label: `${path === '$' ? '' : `${path.replace(PATH_PREFIX_RE, '')}.`}[*].${key}`,
                 length: value.length,
               });
             }
@@ -72,22 +76,27 @@ function findArrayPaths(
   return results;
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: path traversal with multiple node types
 function getValueAtPath(data: unknown, path: string): unknown {
-  if (path === '$') return data;
+  if (path === '$') {
+    return data;
+  }
 
-  const parts: string[] = [];
+  const parts: Array<string> = [];
   let p = path.startsWith('$') ? path.slice(1) : path;
   while (p.length > 0) {
     if (p[0] === '.') {
       p = p.slice(1);
-      const match = p.match(/^[a-zA-Z_$][a-zA-Z0-9_$]*/);
+      const match = p.match(IDENTIFIER_RE);
       if (match) {
         parts.push(match[0]);
         p = p.slice(match[0].length);
       }
     } else if (p[0] === '[') {
       const end = p.indexOf(']');
-      if (end === -1) break;
+      if (end === -1) {
+        break;
+      }
       let key = p.slice(1, end);
       if (
         (key.startsWith('"') && key.endsWith('"')) ||
@@ -108,7 +117,9 @@ function getValueAtPath(data: unknown, path: string): unknown {
 
   let current: unknown = data;
   for (const part of parts) {
-    if (current === null || current === undefined) return undefined;
+    if (current === null || current === undefined) {
+      return undefined;
+    }
     if (part === '*') {
       // Flatten: collect from all array items
       if (Array.isArray(current)) {
@@ -137,7 +148,7 @@ function getValueAtPath(data: unknown, path: string): unknown {
   return current;
 }
 
-function getColumns(data: unknown[]): string[] {
+function getColumns(data: Array<unknown>): Array<string> {
   const cols = new Set<string>();
   for (const item of data) {
     if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
@@ -149,10 +160,35 @@ function getColumns(data: unknown[]): string[] {
   return Array.from(cols);
 }
 
+function getRowKey(
+  row: unknown,
+  index: number,
+  columns: Array<string>,
+): string {
+  if (typeof row === 'object' && row !== null) {
+    const obj = row as Record<string, unknown>;
+    const id = obj.id ?? obj._id ?? obj.key;
+    if (id !== undefined) {
+      return String(id);
+    }
+    const first = columns[0];
+    if (first && obj[first] !== undefined) {
+      return `${String(obj[first])}-${index}`;
+    }
+  }
+  return `row-${index}`;
+}
+
 function formatCell(value: unknown): string {
-  if (value === null) return 'null';
-  if (value === undefined) return '';
-  if (typeof value === 'object') return JSON.stringify(value);
+  if (value === null) {
+    return 'null';
+  }
+  if (value === undefined) {
+    return '';
+  }
+  if (typeof value === 'object') {
+    return JSON.stringify(value);
+  }
   return String(value);
 }
 
@@ -254,7 +290,7 @@ export function TableView({ data }: TableViewProps) {
             <tbody>
               {rows.map((row, i) => (
                 <tr
-                  key={i}
+                  key={getRowKey(row, i, columns)}
                   className="border-b border-border/30 hover:bg-muted/30 transition-colors"
                 >
                   {columns.map((col) => {

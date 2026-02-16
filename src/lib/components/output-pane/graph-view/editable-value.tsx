@@ -34,7 +34,6 @@ export function EditableValue({
   if (editing) {
     return (
       <input
-        autoFocus
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
         onBlur={() => {
@@ -47,7 +46,9 @@ export function EditableValue({
             onEditValue(path, editValue);
             setEditing(false);
           }
-          if (e.key === 'Escape') setEditing(false);
+          if (e.key === 'Escape') {
+            setEditing(false);
+          }
         }}
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
@@ -61,8 +62,16 @@ export function EditableValue({
       <Tooltip>
         <TooltipTrigger asChild>
           <span
+            role="button"
+            tabIndex={0}
             className={`${className} cursor-help nodrag`}
             onDoubleClick={startEdit}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                startEdit(e as unknown as React.MouseEvent);
+              }
+            }}
           >
             {value.slice(0, MAX_VALUE_LENGTH)}…
           </span>
@@ -76,8 +85,16 @@ export function EditableValue({
 
   return (
     <span
+      role="button"
+      tabIndex={0}
       className={`${className} cursor-text nodrag`}
       onDoubleClick={startEdit}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          startEdit(e as unknown as React.MouseEvent);
+        }
+      }}
     >
       {value}
     </span>

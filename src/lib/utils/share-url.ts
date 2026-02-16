@@ -3,10 +3,14 @@
  * Call this once at app startup.
  */
 export function hydrateFromShareUrl(): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {
+    return;
+  }
 
   const hash = window.location.hash;
-  if (!hash.startsWith('#share=')) return;
+  if (!hash.startsWith('#share=')) {
+    return;
+  }
 
   try {
     const encoded = hash.slice(7);

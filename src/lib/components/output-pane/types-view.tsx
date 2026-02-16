@@ -31,6 +31,7 @@ export function TypesView({ data }: TypesViewProps) {
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-1 border-b px-2 py-1">
         <button
+          type="button"
           onClick={() => setSchemaMode('typescript')}
           className={`rounded px-2 py-0.5 text-xs font-medium transition-colors ${
             schemaMode === 'typescript'
@@ -41,6 +42,7 @@ export function TypesView({ data }: TypesViewProps) {
           TypeScript
         </button>
         <button
+          type="button"
           onClick={() => setSchemaMode('zod')}
           className={`rounded px-2 py-0.5 text-xs font-medium transition-colors ${
             schemaMode === 'zod'

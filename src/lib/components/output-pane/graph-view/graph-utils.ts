@@ -13,11 +13,21 @@ export function parseDisplayValue(display: string): unknown {
   if (display.startsWith('"') && display.endsWith('"')) {
     return display.slice(1, -1);
   }
-  if (display === 'null') return null;
-  if (display === 'true') return true;
-  if (display === 'false') return false;
-  if (display === 'undefined') return undefined;
+  if (display === 'null') {
+    return null;
+  }
+  if (display === 'true') {
+    return true;
+  }
+  if (display === 'false') {
+    return false;
+  }
+  if (display === 'undefined') {
+    return undefined;
+  }
   const num = Number(display);
-  if (!Number.isNaN(num) && display.trim() !== '') return num;
+  if (!Number.isNaN(num) && display.trim() !== '') {
+    return num;
+  }
   return display;
 }

@@ -1,5 +1,7 @@
 function escapeCsvField(value: unknown): string {
-  if (value === null || value === undefined) return '';
+  if (value === null || value === undefined) {
+    return '';
+  }
   const str = typeof value === 'object' ? JSON.stringify(value) : String(value);
   if (str.includes(',') || str.includes('"') || str.includes('\n')) {
     return `"${str.replace(/"/g, '""')}"`;
@@ -22,7 +24,9 @@ export function jsonToCsv(data: unknown): string | null {
 
   if (Array.isArray(data)) {
     // Array of primitives → single "value" column
-    if (data.length === 0) return null;
+    if (data.length === 0) {
+      return null;
+    }
     if (data.every((item) => typeof item !== 'object' || item === null)) {
       return `value\n${data.map((v) => escapeCsvField(v)).join('\n')}`;
     }
@@ -42,7 +46,9 @@ export function jsonToCsv(data: unknown): string | null {
     return null;
   }
 
-  if (rows.length === 0) return null;
+  if (rows.length === 0) {
+    return null;
+  }
 
   const columns = getColumns(rows);
   const header = columns.map(escapeCsvField).join(',');

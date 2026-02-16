@@ -13,25 +13,32 @@ export function EditableLabel({
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(label);
 
-  if (!isRoot) return <span>{label}</span>;
+  if (!isRoot) {
+    return <span>{label}</span>;
+  }
 
   if (editing) {
     return (
       <input
-        autoFocus
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
         onBlur={() => {
-          if (editValue.trim()) onRenameRoot(editValue.trim());
+          if (editValue.trim()) {
+            onRenameRoot(editValue.trim());
+          }
           setEditing(false);
         }}
         onKeyDown={(e) => {
           e.stopPropagation();
           if (e.key === 'Enter') {
-            if (editValue.trim()) onRenameRoot(editValue.trim());
+            if (editValue.trim()) {
+              onRenameRoot(editValue.trim());
+            }
             setEditing(false);
           }
-          if (e.key === 'Escape') setEditing(false);
+          if (e.key === 'Escape') {
+            setEditing(false);
+          }
         }}
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
@@ -42,11 +49,21 @@ export function EditableLabel({
 
   return (
     <span
+      role="button"
+      tabIndex={0}
       className="block w-full cursor-text nodrag"
       onDoubleClick={(e) => {
         e.stopPropagation();
         setEditValue(label);
         setEditing(true);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          e.stopPropagation();
+          setEditValue(label);
+          setEditing(true);
+        }
       }}
     >
       {label}

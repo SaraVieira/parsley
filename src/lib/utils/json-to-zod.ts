@@ -1,8 +1,12 @@
 import { capitalize, isSimpleKey, mergeObjectShapes } from '@/lib/utils/shared';
 
 function inferZod(value: unknown, name: string, indent: number): string {
-  if (value === null) return 'z.null()';
-  if (value === undefined) return 'z.undefined()';
+  if (value === null) {
+    return 'z.null()';
+  }
+  if (value === undefined) {
+    return 'z.undefined()';
+  }
 
   switch (typeof value) {
     case 'string':
@@ -16,17 +20,19 @@ function inferZod(value: unknown, name: string, indent: number): string {
   }
 
   if (Array.isArray(value)) {
-    if (value.length === 0) return 'z.array(z.unknown())';
+    if (value.length === 0) {
+      return 'z.array(z.unknown())';
+    }
 
     const first = value[0];
     if (typeof first === 'object' && first !== null && !Array.isArray(first)) {
       const merged = mergeObjectShapes(
         value.filter((v) => typeof v === 'object' && v !== null),
       );
-      return `z.array(${generateZodObject(merged, name + 'Item', indent)})`;
+      return `z.array(${generateZodObject(merged, `${name}Item`, indent)})`;
     }
 
-    const itemSchema = inferZod(first, name + 'Item', indent);
+    const itemSchema = inferZod(first, `${name}Item`, indent);
     return `z.array(${itemSchema})`;
   }
 
@@ -44,7 +50,7 @@ function generateZodObject(
 ): string {
   const pad = '  '.repeat(indent);
   const innerPad = '  '.repeat(indent + 1);
-  const lines: string[] = [];
+  const lines: Array<string> = [];
 
   lines.push(`z.object({\n`);
 
@@ -63,8 +69,7 @@ function generateZodObject(
 }
 
 export function jsonToZod(data: unknown, rootName = 'root'): string {
-  const schemaName =
-    rootName.charAt(0).toLowerCase() + rootName.slice(1) + 'Schema';
+  const schemaName = `${rootName.charAt(0).toLowerCase() + rootName.slice(1)}Schema`;
 
   if (data === null || data === undefined) {
     return `import { z } from "zod";\n\nconst ${schemaName} = ${data === null ? 'z.null()' : 'z.undefined()'};`;
@@ -84,7 +89,7 @@ export function jsonToZod(data: unknown, rootName = 'root'): string {
       const merged = mergeObjectShapes(
         data.filter((v) => typeof v === 'object' && v !== null),
       );
-      const itemSchema = generateZodObject(merged, rootName + 'Item', 0);
+      const itemSchema = generateZodObject(merged, `${rootName}Item`, 0);
       return `import { z } from "zod";\n\nconst ${rootName}ItemSchema = ${itemSchema};\n\nconst ${schemaName} = z.array(${rootName}ItemSchema);`;
     }
     const itemSchema = inferZod(first, rootName, 0);

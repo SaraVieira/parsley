@@ -44,7 +44,9 @@ export function GraphView({ data }: GraphViewProps) {
 
   const onEditValue = useCallback(
     (path: string, rawValue: string) => {
-      if (!path) return;
+      if (!path) {
+        return;
+      }
       const value = parseDisplayValue(rawValue);
       updateValueAtPath(path, value);
     },
@@ -53,7 +55,9 @@ export function GraphView({ data }: GraphViewProps) {
 
   const onDelete = useCallback(
     (path: string) => {
-      if (!path || path === '$') return;
+      if (!path || path === '$') {
+        return;
+      }
       storeDeleteAtPath(path);
     },
     [storeDeleteAtPath],
@@ -61,7 +65,9 @@ export function GraphView({ data }: GraphViewProps) {
 
   const onAdd = useCallback(
     (path: string, isArray: boolean) => {
-      if (!path) return;
+      if (!path) {
+        return;
+      }
       if (isArray) {
         storeAddAtPath(path, '', null);
       } else {
@@ -73,7 +79,9 @@ export function GraphView({ data }: GraphViewProps) {
 
   const onRenameKey = useCallback(
     (path: string, newKey: string) => {
-      if (!path) return;
+      if (!path) {
+        return;
+      }
       storeRenameKeyAtPath(path, newKey);
     },
     [storeRenameKeyAtPath],
@@ -103,15 +111,20 @@ export function GraphView({ data }: GraphViewProps) {
   const toggleCollapse = useCallback((nodeId: string) => {
     setCollapsedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(nodeId)) next.delete(nodeId);
-      else next.add(nodeId);
+      if (next.has(nodeId)) {
+        next.delete(nodeId);
+      } else {
+        next.add(nodeId);
+      }
       return next;
     });
   }, []);
 
   const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
     const path = (node.data as NodeData).jsonPath;
-    if (path) setSelectedPath(path);
+    if (path) {
+      setSelectedPath(path);
+    }
   }, []);
 
   const handleCopyPath = useCallback(() => {
@@ -139,10 +152,11 @@ export function GraphView({ data }: GraphViewProps) {
   }, [data, rootName]);
 
   const { computedNodes, computedEdges } = useMemo(() => {
-    if (collapsedIds.size === 0)
+    if (collapsedIds.size === 0) {
       return { computedNodes: allNodes, computedEdges: allEdges };
+    }
 
-    const childrenMap = new Map<string, string[]>();
+    const childrenMap = new Map<string, Array<string>>();
     for (const edge of allEdges) {
       const children = childrenMap.get(edge.source) || [];
       children.push(edge.target);
@@ -168,7 +182,9 @@ export function GraphView({ data }: GraphViewProps) {
   }, [allNodes, allEdges, collapsedIds]);
 
   const highlightedIds = useMemo(() => {
-    if (!searchQuery.trim()) return new Set<string>();
+    if (!searchQuery.trim()) {
+      return new Set<string>();
+    }
     const q = searchQuery.toLowerCase();
     const matches = new Set<string>();
     for (const node of computedNodes) {
@@ -179,7 +195,7 @@ export function GraphView({ data }: GraphViewProps) {
           searchableTexts.push(entry.key, entry.value);
         }
       }
-      if (searchableTexts.some((t) => t && t.toLowerCase().includes(q))) {
+      if (searchableTexts.some((t) => t?.toLowerCase().includes(q))) {
         matches.add(node.id);
       }
     }
@@ -218,6 +234,7 @@ export function GraphView({ data }: GraphViewProps) {
                 {highlightedIds.size} found
               </span>
               <button
+                type="button"
                 onClick={() => setSearchQuery('')}
                 className="text-muted-foreground hover:text-foreground"
               >
@@ -266,6 +283,7 @@ export function GraphView({ data }: GraphViewProps) {
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 rounded-md border bg-card px-3 py-1.5 shadow-sm">
           <code className="text-xs font-mono text-primary">{selectedPath}</code>
           <button
+            type="button"
             onClick={handleCopyPath}
             className="text-muted-foreground hover:text-foreground transition-colors"
           >

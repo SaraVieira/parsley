@@ -1,6 +1,6 @@
 import type { Snippet } from './types';
 
-export const COMMON_SNIPPETS: Snippet[] = [
+export const COMMON_SNIPPETS: Array<Snippet> = [
   {
     label: 'return filter',
     detail: 'Return filtered data',

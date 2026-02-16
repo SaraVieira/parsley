@@ -1,8 +1,12 @@
 import { capitalize, isSimpleKey, mergeObjectShapes } from '@/lib/utils/shared';
 
 function inferType(value: unknown, name: string, indent: number): string {
-  if (value === null) return 'null';
-  if (value === undefined) return 'undefined';
+  if (value === null) {
+    return 'null';
+  }
+  if (value === undefined) {
+    return 'undefined';
+  }
 
   switch (typeof value) {
     case 'string':
@@ -16,7 +20,9 @@ function inferType(value: unknown, name: string, indent: number): string {
   }
 
   if (Array.isArray(value)) {
-    if (value.length === 0) return 'unknown[]';
+    if (value.length === 0) {
+      return 'unknown[]';
+    }
 
     // Check if all items have the same shape
     const first = value[0];
@@ -25,10 +31,10 @@ function inferType(value: unknown, name: string, indent: number): string {
       const merged = mergeObjectShapes(
         value.filter((v) => typeof v === 'object' && v !== null),
       );
-      return `${generateInterface(merged, name + 'Item', indent)}[]`;
+      return `${generateInterface(merged, `${name}Item`, indent)}[]`;
     }
 
-    const itemType = inferType(first, name + 'Item', indent);
+    const itemType = inferType(first, `${name}Item`, indent);
     return `${itemType}[]`;
   }
 
@@ -46,7 +52,7 @@ function generateInterface(
 ): string {
   const pad = '  '.repeat(indent);
   const innerPad = '  '.repeat(indent + 1);
-  const lines: string[] = [];
+  const lines: Array<string> = [];
 
   lines.push(`{\n`);
 
@@ -79,7 +85,7 @@ export function jsonToTypeScript(data: unknown, rootName = 'Root'): string {
       const merged = mergeObjectShapes(
         data.filter((v) => typeof v === 'object' && v !== null),
       );
-      const iface = generateInterface(merged, rootName + 'Item', 0);
+      const iface = generateInterface(merged, `${rootName}Item`, 0);
       return `type ${rootName}Item = ${iface}\n\ntype ${rootName} = ${rootName}Item[];`;
     }
     return `type ${rootName} = ${inferType(first, rootName, 0)}[];`;

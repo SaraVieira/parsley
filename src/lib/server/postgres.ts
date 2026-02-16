@@ -4,7 +4,9 @@ import pg from 'pg';
 const CONNECTION_TIMEOUT_MS = 10000;
 
 function jsonReplacer(_key: string, value: unknown): unknown {
-  if (typeof value === 'bigint') return Number(value);
+  if (typeof value === 'bigint') {
+    return Number(value);
+  }
   return value;
 }
 
@@ -56,7 +58,9 @@ export const fetchTableData = createServerFn({ method: 'POST' })
         Array<Record<string, string | number | boolean | null>>
       > = {};
       for (const table of data.tables) {
-        if (!validNames.has(table)) continue;
+        if (!validNames.has(table)) {
+          continue;
+        }
         // Escape double quotes in table names to prevent query syntax errors
         const escaped = table.replace(/"/g, '""');
         const rows = await client.query(

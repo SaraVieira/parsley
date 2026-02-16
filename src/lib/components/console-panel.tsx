@@ -4,9 +4,15 @@ import { useRef, useState } from 'react';
 import { useParsleyStore } from '@/lib/stores/parsley-store';
 
 function formatLogArg(arg: unknown): string {
-  if (arg === null) return 'null';
-  if (arg === undefined) return 'undefined';
-  if (typeof arg === 'string') return arg;
+  if (arg === null) {
+    return 'null';
+  }
+  if (arg === undefined) {
+    return 'undefined';
+  }
+  if (typeof arg === 'string') {
+    return arg;
+  }
   if (typeof arg === 'object') {
     try {
       return JSON.stringify(arg, null, 2);
@@ -43,6 +49,7 @@ export function ConsolePanel() {
     >
       <div className="flex items-center justify-between bg-muted/30 px-2 py-0.5">
         <button
+          type="button"
           onClick={() => setCollapsed(!collapsed)}
           className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground hover:text-foreground"
         >
@@ -58,6 +65,7 @@ export function ConsolePanel() {
         </button>
         {!collapsed && consoleLogs.length > 0 && (
           <button
+            type="button"
             onClick={clearConsoleLogs}
             className="text-muted-foreground hover:text-foreground"
             title="Clear console"
@@ -78,7 +86,7 @@ export function ConsolePanel() {
           ) : (
             consoleLogs.map((entry, i) => (
               <div
-                key={i}
+                key={`${entry.level}-${i}`}
                 className={`py-0.5 whitespace-pre-wrap break-all ${levelColors[entry.level] ?? ''}`}
               >
                 <span className="opacity-50">{levelPrefixes[entry.level]}</span>

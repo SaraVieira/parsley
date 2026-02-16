@@ -50,7 +50,9 @@ export const Header = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (event) => {
       const text = event.target?.result;
@@ -76,7 +78,9 @@ export const Header = () => {
 
   const handleExportCsv = () => {
     const csv = jsonToCsv(transformedJson);
-    if (!csv) return;
+    if (!csv) {
+      return;
+    }
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

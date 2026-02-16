@@ -23,7 +23,7 @@ function ObjectNode({
 }: NodeProps<
   Node<{
     label: string;
-    entries?: EntryData[];
+    entries?: Array<EntryData>;
     hasChildren?: boolean;
     jsonPath?: string;
   }>
@@ -49,9 +49,10 @@ function ObjectNode({
         <div className="ml-auto flex items-center gap-0.5">
           {data.jsonPath && data.jsonPath !== '$' && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                onDelete(data.jsonPath!);
+                onDelete(data.jsonPath ?? '');
               }}
               className="shrink-0 rounded p-0.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
             >
@@ -95,9 +96,10 @@ function ObjectNode({
       {data.jsonPath && (
         <div className="border-t border-border/60 dark:border-white/10 px-3 py-1">
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onAdd(data.jsonPath!, false);
+              onAdd(data.jsonPath ?? '', false);
             }}
             className="nodrag flex items-center gap-1 text-[10px] text-muted-foreground hover:text-primary"
           >
@@ -146,9 +148,10 @@ function ArrayNode({
         <div className="ml-auto flex items-center gap-0.5">
           {data.jsonPath && data.jsonPath !== '$' && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                onDelete(data.jsonPath!);
+                onDelete(data.jsonPath ?? '');
               }}
               className="shrink-0 rounded p-0.5 text-teal-600/50 hover:text-destructive hover:bg-destructive/10 dark:text-teal-400/50"
             >
@@ -164,9 +167,10 @@ function ArrayNode({
       {data.jsonPath && (
         <div className="border-t border-border/60 dark:border-white/10 px-3 py-1">
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onAdd(data.jsonPath!, true);
+              onAdd(data.jsonPath ?? '', true);
             }}
             className="nodrag flex items-center gap-1 text-[10px] text-muted-foreground hover:text-teal-600 dark:hover:text-teal-400"
           >
@@ -207,9 +211,10 @@ function ValueNode({
           <div className="text-[10px] text-muted-foreground">{data.label}</div>
           {data.jsonPath && data.jsonPath !== '$' && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                onDelete(data.jsonPath!);
+                onDelete(data.jsonPath ?? '');
               }}
               className="nodrag shrink-0 rounded p-0.5 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10"
             >

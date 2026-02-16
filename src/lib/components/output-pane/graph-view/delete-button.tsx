@@ -20,11 +20,14 @@ export function DeleteButton({
   if (showChoice && keyName) {
     return (
       <div
+        role="group"
         className="nodrag flex items-center gap-1"
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
       >
         <button
+          type="button"
           onClick={() => {
             onDelete(path);
             setShowChoice(false);
@@ -35,6 +38,7 @@ export function DeleteButton({
           This
         </button>
         <button
+          type="button"
           onClick={() => {
             onBulkDeleteKey(keyName);
             setShowChoice(false);
@@ -45,6 +49,7 @@ export function DeleteButton({
           All
         </button>
         <button
+          type="button"
           onClick={() => setShowChoice(false)}
           className="rounded px-1 py-0.5 text-[10px] text-muted-foreground hover:text-foreground"
         >
@@ -56,6 +61,7 @@ export function DeleteButton({
 
   return (
     <button
+      type="button"
       onClick={(e) => {
         e.stopPropagation();
         if (keyName) {

@@ -11,10 +11,13 @@ export function CollapseToggle({
   hasChildren?: boolean;
 }) {
   const { collapsedIds, toggleCollapse } = useContext(GraphContext);
-  if (!hasChildren) return null;
+  if (!hasChildren) {
+    return null;
+  }
   const isCollapsed = collapsedIds.has(nodeId);
   return (
     <button
+      type="button"
       onClick={(e) => {
         e.stopPropagation();
         toggleCollapse(nodeId);

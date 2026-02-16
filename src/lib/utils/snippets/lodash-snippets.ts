@@ -1,6 +1,6 @@
 import type { Snippet } from './types';
 
-export const LODASH_SNIPPETS: Snippet[] = [
+export const LODASH_SNIPPETS: Array<Snippet> = [
   {
     label: '_.filter',
     detail: 'Filter items by condition',

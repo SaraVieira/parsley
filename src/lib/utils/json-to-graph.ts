@@ -20,22 +20,30 @@ type NodeData = {
 };
 
 type LayoutResult = {
-  nodes: Node<NodeData>[];
-  edges: Edge[];
+  nodes: Array<Node<NodeData>>;
+  edges: Array<Edge>;
   height: number;
 };
 
 function getValueDisplay(value: unknown): { display: string; type: string } {
-  if (value === null) return { display: 'null', type: 'null' };
-  if (value === undefined) return { display: 'undefined', type: 'undefined' };
-  if (typeof value === 'string')
+  if (value === null) {
+    return { display: 'null', type: 'null' };
+  }
+  if (value === undefined) {
+    return { display: 'undefined', type: 'undefined' };
+  }
+  if (typeof value === 'string') {
     return { display: `"${value}"`, type: 'string' };
-  if (typeof value === 'number')
+  }
+  if (typeof value === 'number') {
     return { display: String(value), type: 'number' };
-  if (typeof value === 'boolean')
+  }
+  if (typeof value === 'boolean') {
     return { display: String(value), type: 'boolean' };
-  if (Array.isArray(value))
+  }
+  if (Array.isArray(value)) {
     return { display: `Array(${value.length})`, type: 'array' };
+  }
   return { display: 'Object', type: 'object' };
 }
 
@@ -49,6 +57,7 @@ function isPrimitive(value: unknown): boolean {
   );
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: recursive graph builder
 function buildGraph(
   data: unknown,
   key: string,
@@ -58,8 +67,8 @@ function buildGraph(
   idCounter: { current: number },
   jsonPath: string = '$',
 ): LayoutResult {
-  const nodes: Node<NodeData>[] = [];
-  const edges: Edge[] = [];
+  const nodes: Array<Node<NodeData>> = [];
+  const edges: Array<Edge> = [];
   const nodeId = `node-${idCounter.current++}`;
 
   if (isPrimitive(data)) {
@@ -200,8 +209,8 @@ export function jsonToGraph(
   data: unknown,
   rootLabel = 'root',
 ): {
-  nodes: Node<NodeData>[];
-  edges: Edge[];
+  nodes: Array<Node<NodeData>>;
+  edges: Array<Edge>;
 } {
   const idCounter = { current: 0 };
   const result = buildGraph(data, rootLabel, null, 0, 0, idCounter);

@@ -6,7 +6,7 @@ import { LODASH_SNIPPETS } from './lodash-snippets';
 export function registerTransformCompletions(monaco: Monaco): void {
   monaco.languages.registerCompletionItemProvider('javascript', {
     triggerCharacters: ['.', '_'],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: Monaco editor API types
     provideCompletionItems: (model: any, position: any) => {
       const word = model.getWordUntilPosition(position);
       const range = {

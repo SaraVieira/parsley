@@ -56,9 +56,9 @@ type ParsleyState = {
   transformedJson: unknown;
   viewMode: ViewMode;
   editorTab: EditorTab;
-  history: HistoryEntry[];
+  history: Array<HistoryEntry>;
   rootName: string;
-  consoleLogs: ConsoleEntry[];
+  consoleLogs: Array<ConsoleEntry>;
   autoRun: boolean;
 };
 
@@ -144,7 +144,9 @@ export const useParsleyStore = create<ParsleyStore>()(
         executeTransform: () => {
           const { parsedJson, transformCode, transformedJson, jsonError } =
             get();
-          if (jsonError) return;
+          if (jsonError) {
+            return;
+          }
 
           const { result, error, logs } = executeTransformCode(
             transformCode,
@@ -179,7 +181,9 @@ export const useParsleyStore = create<ParsleyStore>()(
 
         revert: () => {
           const { history } = get();
-          if (history.length === 0) return;
+          if (history.length === 0) {
+            return;
+          }
 
           const previous = history[history.length - 1];
           set({
@@ -245,7 +249,9 @@ export const useParsleyStore = create<ParsleyStore>()(
         rootName: state.rootName,
       }),
       onRehydrateStorage: () => (state) => {
-        if (!state) return;
+        if (!state) {
+          return;
+        }
         try {
           const parsed = JSON.parse(state.jsonInput);
           state.parsedJson = parsed;

@@ -40,7 +40,9 @@ export function EditorPane() {
     (value: string | undefined) => {
       setTransformCode(value ?? '');
       if (autoRun) {
-        if (autoRunTimerRef.current) clearTimeout(autoRunTimerRef.current);
+        if (autoRunTimerRef.current) {
+          clearTimeout(autoRunTimerRef.current);
+        }
         autoRunTimerRef.current = setTimeout(() => {
           executeTransform();
         }, 500);
@@ -67,7 +69,9 @@ export function EditorPane() {
     setIsDragging(false);
 
     const file = e.dataTransfer.files[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     if (!file.name.endsWith('.json')) {
       return;
@@ -85,6 +89,8 @@ export function EditorPane() {
 
   return (
     <div
+      role="region"
+      aria-label="Editor pane"
       className="flex h-full flex-col"
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}

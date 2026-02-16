@@ -3,7 +3,7 @@ import { createContext } from 'react';
 export type NodeData = {
   label: string;
   jsonPath?: string;
-  entries?: EntryData[];
+  entries?: Array<EntryData>;
   itemCount?: number;
   value?: string;
   valueType?: string;
@@ -27,13 +27,29 @@ export type GraphContextValue = {
 
 export const GraphContext = createContext<GraphContextValue>({
   collapsedIds: new Set(),
-  toggleCollapse: () => {},
+  toggleCollapse: () => {
+    /* noop */
+  },
   highlightedIds: new Set(),
-  onEditValue: () => {},
-  onDelete: () => {},
-  onBulkDeleteKey: () => {},
-  onAdd: () => {},
-  onRenameKey: () => {},
-  onBulkRenameKey: () => {},
-  onRenameRoot: () => {},
+  onEditValue: () => {
+    /* noop */
+  },
+  onDelete: () => {
+    /* noop */
+  },
+  onBulkDeleteKey: () => {
+    /* noop */
+  },
+  onAdd: () => {
+    /* noop */
+  },
+  onRenameKey: () => {
+    /* noop */
+  },
+  onBulkRenameKey: () => {
+    /* noop */
+  },
+  onRenameRoot: () => {
+    /* noop */
+  },
 });

@@ -45,7 +45,9 @@ export function PostgresImportDialog({
   };
 
   const handleConnect = async () => {
-    if (!connectionString.trim()) return;
+    if (!connectionString.trim()) {
+      return;
+    }
     setLoading(true);
     setError(null);
 
@@ -70,7 +72,9 @@ export function PostgresImportDialog({
   };
 
   const handleImport = async () => {
-    if (selectedTables.size === 0) return;
+    if (selectedTables.size === 0) {
+      return;
+    }
     setStep('importing');
     setError(null);
 
@@ -116,7 +120,9 @@ export function PostgresImportDialog({
     <Dialog
       open={open}
       onOpenChange={(o) => {
-        if (!o) resetState();
+        if (!o) {
+          resetState();
+        }
         onOpenChange(o);
       }}
     >
@@ -141,7 +147,9 @@ export function PostgresImportDialog({
                 value={connectionString}
                 onChange={(e) => setConnectionString(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleConnect();
+                  if (e.key === 'Enter') {
+                    handleConnect();
+                  }
                 }}
                 type="url"
                 className="font-mono text-xs"
@@ -185,16 +193,22 @@ export function PostgresImportDialog({
 
             <div className="max-h-60 space-y-1 overflow-y-auto rounded-md border p-2">
               {tables.map((table) => (
-                <label
+                <div
                   key={table}
                   className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 hover:bg-muted/50"
                 >
                   <Checkbox
+                    id={`table-${table}`}
                     checked={selectedTables.has(table)}
                     onCheckedChange={() => toggleTable(table)}
                   />
-                  <span className="font-mono text-xs">{table}</span>
-                </label>
+                  <label
+                    htmlFor={`table-${table}`}
+                    className="font-mono text-xs cursor-pointer"
+                  >
+                    {table}
+                  </label>
+                </div>
               ))}
             </div>
 

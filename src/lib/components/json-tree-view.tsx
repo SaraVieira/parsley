@@ -33,14 +33,21 @@ type TreeNodeProps = {
 };
 
 function getLeafDisplay(value: unknown): { display: string; type: string } {
-  if (value === null) return { display: 'null', type: 'null' };
-  if (value === undefined) return { display: 'undefined', type: 'undefined' };
-  if (typeof value === 'string')
+  if (value === null) {
+    return { display: 'null', type: 'null' };
+  }
+  if (value === undefined) {
+    return { display: 'undefined', type: 'undefined' };
+  }
+  if (typeof value === 'string') {
     return { display: `"${value}"`, type: 'string' };
-  if (typeof value === 'number')
+  }
+  if (typeof value === 'number') {
     return { display: String(value), type: 'number' };
-  if (typeof value === 'boolean')
+  }
+  if (typeof value === 'boolean') {
     return { display: String(value), type: 'boolean' };
+  }
   return { display: String(value), type: 'unknown' };
 }
 
@@ -55,13 +62,21 @@ function LeafNode({
   display: string;
   colorClass: string;
   depth: number;
-  onClick: (e: React.MouseEvent) => void;
+  onClick: (e: React.MouseEvent | React.KeyboardEvent) => void;
 }) {
   return (
     <div
+      role="button"
+      tabIndex={0}
       className="flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded px-1 cursor-pointer"
       style={{ paddingLeft: depth * 16 }}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick(e);
+        }
+      }}
     >
       <span className="w-4" />
       <span className="text-muted-foreground">{keyName}:</span>
@@ -86,7 +101,7 @@ function TreeNode({
   }, []);
 
   const handleClick = useCallback(
-    (e: React.MouseEvent) => {
+    (e: React.MouseEvent | React.KeyboardEvent) => {
       e.stopPropagation();
       onSelect?.(path, value);
     },
@@ -111,11 +126,20 @@ function TreeNode({
     return (
       <div>
         <div
+          role="button"
+          tabIndex={0}
           className="flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded px-1 cursor-pointer"
           style={{ paddingLeft: depth * 16 }}
           onClick={toggle}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggle(e as unknown as React.MouseEvent);
+            }
+          }}
         >
           <button
+            type="button"
             onClick={toggle}
             className="w-4 shrink-0 flex items-center justify-center"
           >
@@ -155,11 +179,20 @@ function TreeNode({
   return (
     <div>
       <div
+        role="button"
+        tabIndex={0}
         className="flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded px-1 cursor-pointer"
         style={{ paddingLeft: depth * 16 }}
         onClick={toggle}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggle(e as unknown as React.MouseEvent);
+          }
+        }}
       >
         <button
+          type="button"
           onClick={toggle}
           className="w-4 shrink-0 flex items-center justify-center"
         >

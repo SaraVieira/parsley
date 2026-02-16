@@ -1,5 +1,8 @@
 import { isSimpleKey } from '@/lib/utils/shared';
 
+const DIGITS_ONLY_RE = /^\d+$/;
+const IDENTIFIER_RE = /^[a-zA-Z_$][a-zA-Z0-9_$]*/;
+
 /**
  * Set a value in a JSON object at the given path.
  * Path format: $.users[0].name or $["key with spaces"]
@@ -11,7 +14,9 @@ export function setValueAtPath(
   value: unknown,
 ): unknown {
   const segments = parsePath(path);
-  if (segments.length === 0) return value;
+  if (segments.length === 0) {
+    return value;
+  }
 
   return setRecursive(root, segments, 0, value);
 }
@@ -22,7 +27,9 @@ export function setValueAtPath(
  */
 export function deleteAtPath(root: unknown, path: string): unknown {
   const segments = parsePath(path);
-  if (segments.length === 0) return undefined;
+  if (segments.length === 0) {
+    return undefined;
+  }
 
   return deleteRecursive(root, segments, 0);
 }
@@ -37,14 +44,17 @@ export function renameKeyAtPath(
   newKey: string,
 ): unknown {
   const segments = parsePath(path);
-  if (segments.length === 0) return root;
+  if (segments.length === 0) {
+    return root;
+  }
 
   const parentSegments = segments.slice(0, -1);
   const oldKey = segments[segments.length - 1];
 
   const parent = getValueAtPath(root, buildPath(parentSegments));
-  if (parent === null || typeof parent !== 'object' || Array.isArray(parent))
+  if (parent === null || typeof parent !== 'object' || Array.isArray(parent)) {
     return root;
+  }
 
   const obj = parent as Record<string, unknown>;
   const newObj: Record<string, unknown> = {};
@@ -56,7 +66,9 @@ export function renameKeyAtPath(
     }
   }
 
-  if (parentSegments.length === 0) return newObj;
+  if (parentSegments.length === 0) {
+    return newObj;
+  }
   return setValueAtPath(root, buildPath(parentSegments), newObj);
 }
 
@@ -67,7 +79,9 @@ export function getValueAtPath(root: unknown, path: string): unknown {
   const segments = parsePath(path);
   let current = root;
   for (const seg of segments) {
-    if (current === null || current === undefined) return undefined;
+    if (current === null || current === undefined) {
+      return undefined;
+    }
     if (Array.isArray(current)) {
       const idx = Number(seg);
       current = current[idx];
@@ -95,13 +109,17 @@ export function addAtPath(
 
   if (Array.isArray(target)) {
     const newArr = [...target, value];
-    if (path === '$') return newArr;
+    if (path === '$') {
+      return newArr;
+    }
     return setValueAtPath(root, path, newArr);
   }
 
   if (typeof target === 'object' && target !== null) {
     const newObj = { ...(target as Record<string, unknown>), [key]: value };
-    if (path === '$') return newObj;
+    if (path === '$') {
+      return newObj;
+    }
     return setValueAtPath(root, path, newObj);
   }
 
@@ -117,7 +135,9 @@ export function bulkRenameKey(
   oldKey: string,
   newKey: string,
 ): unknown {
-  if (oldKey === newKey) return root;
+  if (oldKey === newKey) {
+    return root;
+  }
   return bulkRenameRecursive(root, oldKey, newKey);
 }
 
@@ -171,16 +191,18 @@ function bulkDeleteRecursive(current: unknown, key: string): unknown {
   const obj = current as Record<string, unknown>;
   const result: Record<string, unknown> = {};
   for (const k of Object.keys(obj)) {
-    if (k === key) continue;
+    if (k === key) {
+      continue;
+    }
     result[k] = bulkDeleteRecursive(obj[k], key);
   }
   return result;
 }
 
-function buildPath(segments: string[]): string {
+function buildPath(segments: Array<string>): string {
   let path = '$';
   for (const seg of segments) {
-    if (/^\d+$/.test(seg)) {
+    if (DIGITS_ONLY_RE.test(seg)) {
       path += `[${seg}]`;
     } else if (isSimpleKey(seg)) {
       path += `.${seg}`;
@@ -191,22 +213,25 @@ function buildPath(segments: string[]): string {
   return path;
 }
 
-function parsePath(path: string): string[] {
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: path parser with bracket/dot notation
+function parsePath(path: string): Array<string> {
   // Remove leading $
   let p = path.startsWith('$') ? path.slice(1) : path;
-  const segments: string[] = [];
+  const segments: Array<string> = [];
 
   while (p.length > 0) {
     if (p[0] === '.') {
       p = p.slice(1);
-      const match = p.match(/^[a-zA-Z_$][a-zA-Z0-9_$]*/);
+      const match = p.match(IDENTIFIER_RE);
       if (match) {
         segments.push(match[0]);
         p = p.slice(match[0].length);
       }
     } else if (p[0] === '[') {
       const bracketEnd = p.indexOf(']');
-      if (bracketEnd === -1) break;
+      if (bracketEnd === -1) {
+        break;
+      }
       let key = p.slice(1, bracketEnd);
       // Remove quotes if present
       if (
@@ -227,11 +252,13 @@ function parsePath(path: string): string[] {
 
 function setRecursive(
   current: unknown,
-  segments: string[],
+  segments: Array<string>,
   index: number,
   value: unknown,
 ): unknown {
-  if (index === segments.length) return value;
+  if (index === segments.length) {
+    return value;
+  }
 
   const seg = segments[index];
 
@@ -259,7 +286,7 @@ function setRecursive(
 
 function deleteRecursive(
   current: unknown,
-  segments: string[],
+  segments: Array<string>,
   index: number,
 ): unknown {
   if (index === segments.length - 1) {

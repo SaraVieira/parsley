@@ -73,6 +73,7 @@ export function Toolbar() {
       <div className="flex min-w-0 items-center gap-1">
         <div className="flex items-center gap-1 border-r border-border/60 pr-2 mr-1">
           <button
+            type="button"
             onClick={() => setEditorTab('json')}
             className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
               editorTab === 'json'
@@ -83,6 +84,7 @@ export function Toolbar() {
             JSON Input
           </button>
           <button
+            type="button"
             onClick={() => setEditorTab('transform')}
             className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
               editorTab === 'transform'
@@ -186,6 +188,7 @@ export function Toolbar() {
           {(['graph', 'tree', 'table', 'types', 'diff'] as const).map(
             (mode) => (
               <button
+                type="button"
                 key={mode}
                 onClick={() => setViewMode(mode)}
                 className={`rounded px-2 py-1 text-xs font-medium capitalize transition-colors ${

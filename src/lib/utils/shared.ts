@@ -1,4 +1,6 @@
-export function mergeObjectShapes(objects: unknown[]): Record<string, unknown> {
+export function mergeObjectShapes(
+  objects: Array<unknown>,
+): Record<string, unknown> {
   const merged: Record<string, unknown> = {};
   for (const obj of objects) {
     if (typeof obj === 'object' && obj !== null) {
