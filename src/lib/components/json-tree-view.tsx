@@ -201,7 +201,7 @@ function TreeNode({
           )}
         </button>
         <span className="text-muted-foreground">{keyName}:</span>
-        <span className="text-primary">{`{${entries.length}}`}</span>
+        <span className="text-primary">{`{${entries.length} ${entries.length === 1 ? 'key' : 'keys'}}`}</span>
       </div>
       {expanded && (
         <div>

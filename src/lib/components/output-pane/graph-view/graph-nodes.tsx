@@ -33,6 +33,12 @@ function ObjectNode({
   const dimClass = highlighted === false ? 'opacity-30' : '';
   const ringClass = highlighted === true ? 'ring-2 ring-primary' : '';
   const isRoot = data.jsonPath === '$';
+  const isArrayItem = data.label.startsWith('[');
+  const headerClass = isRoot
+    ? 'bg-primary/15 text-primary'
+    : isArrayItem
+      ? 'bg-teal-500/10 text-teal-300'
+      : 'bg-zinc-500/15 text-zinc-300';
   return (
     <div
       className={`min-w-50 max-w-[320px] rounded-lg border border-white/10 bg-zinc-900 shadow-md ${dimClass} ${ringClass}`}
@@ -42,7 +48,9 @@ function ObjectNode({
         position={Position.Left}
         className="size-1.5! bg-zinc-500/40! cursor-default!"
       />
-      <div className="flex items-center rounded-t-lg border-b border-white/10 bg-zinc-500/15 px-3 py-1.5 text-xs font-semibold text-zinc-300">
+      <div
+        className={`flex items-center rounded-t-lg border-b border-white/10 px-3 py-1.5 text-xs font-semibold ${headerClass}`}
+      >
         <div className="flex-1 min-w-0">
           <EditableLabel label={data.label} isRoot={isRoot} />
         </div>
@@ -101,7 +109,7 @@ function ObjectNode({
               e.stopPropagation();
               onAdd(data.jsonPath ?? '', false);
             }}
-            className="nodrag flex items-center gap-1 text-[10px] text-muted-foreground hover:text-primary"
+            className="nodrag flex items-center gap-1 rounded border border-dashed border-muted-foreground/30 px-1.5 py-0.5 text-[10px] text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
           >
             <Plus className="size-2.5" /> Add property
           </button>
@@ -172,7 +180,7 @@ function ArrayNode({
               e.stopPropagation();
               onAdd(data.jsonPath ?? '', true);
             }}
-            className="nodrag flex items-center gap-1 text-[10px] text-muted-foreground hover:text-teal-400"
+            className="nodrag flex items-center gap-1 rounded border border-dashed border-muted-foreground/30 px-1.5 py-0.5 text-[10px] text-muted-foreground transition-colors hover:border-teal-400/50 hover:text-teal-400"
           >
             <Plus className="size-2.5" /> Add item
           </button>

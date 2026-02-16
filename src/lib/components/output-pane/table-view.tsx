@@ -1,4 +1,4 @@
-import { ChevronDown } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -206,9 +206,29 @@ function formatCell(value: unknown): string {
   return String(value);
 }
 
+type SortDir = 'asc' | 'desc';
+type SortState = { column: string; dir: SortDir } | null;
+
+function compareCells(a: unknown, b: unknown): number {
+  if (a === b) {
+    return 0;
+  }
+  if (a == null) {
+    return 1;
+  }
+  if (b == null) {
+    return -1;
+  }
+  if (typeof a === 'number' && typeof b === 'number') {
+    return a - b;
+  }
+  return String(a).localeCompare(String(b));
+}
+
 export function TableView({ data }: TableViewProps) {
   const arrayPaths = useMemo(() => findArrayPaths(data), [data]);
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
+  const [sort, setSort] = useState<SortState>(null);
 
   const activePath =
     selectedPath ?? (arrayPaths.length > 0 ? arrayPaths[0].path : null);
@@ -243,6 +263,31 @@ export function TableView({ data }: TableViewProps) {
     const columns = getColumns(d);
     return { rows: d, columns, isTableData: true };
   }, [activeData]);
+
+  const sortedRows = useMemo(() => {
+    if (!sort) {
+      return rows;
+    }
+    const { column, dir } = sort;
+    return [...rows].sort((a, b) => {
+      const va = (a as Record<string, unknown>)[column];
+      const vb = (b as Record<string, unknown>)[column];
+      const cmp = compareCells(va, vb);
+      return dir === 'desc' ? -cmp : cmp;
+    });
+  }, [rows, sort]);
+
+  const toggleSort = (col: string) => {
+    setSort((prev) => {
+      if (prev?.column !== col) {
+        return { column: col, dir: 'asc' };
+      }
+      if (prev.dir === 'asc') {
+        return { column: col, dir: 'desc' };
+      }
+      return null;
+    });
+  };
 
   if (!isTableData && arrayPaths.length === 0) {
     return (
@@ -296,16 +341,31 @@ export function TableView({ data }: TableViewProps) {
                     key={col}
                     className="whitespace-nowrap border-r border-border/40 px-3 py-2 text-left font-semibold text-foreground last:border-r-0"
                   >
-                    {col}
+                    <button
+                      type="button"
+                      onClick={() => toggleSort(col)}
+                      className="flex items-center gap-1 hover:text-primary transition-colors"
+                    >
+                      {col}
+                      {sort?.column === col ? (
+                        sort.dir === 'asc' ? (
+                          <ArrowUp className="size-3 text-primary" />
+                        ) : (
+                          <ArrowDown className="size-3 text-primary" />
+                        )
+                      ) : (
+                        <ArrowUp className="size-3 opacity-0" />
+                      )}
+                    </button>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, i) => (
+              {sortedRows.map((row, i) => (
                 <tr
                   key={getRowKey(row, i, columns)}
-                  className="border-b border-border/30 hover:bg-muted/30 transition-colors"
+                  className="border-b border-border/30 even:bg-muted/15 hover:bg-muted/30 transition-colors"
                 >
                   {columns.map((col) => {
                     const value = (row as Record<string, unknown>)[col];

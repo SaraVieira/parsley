@@ -17,7 +17,10 @@ export function SplitPane({ left, right }: SplitPaneProps) {
       <ResizablePanel defaultSize={40} minSize={20}>
         {left}
       </ResizablePanel>
-      <ResizableHandle withHandle />
+      <ResizableHandle
+        withHandle
+        className="hover:bg-accent/50 transition-colors"
+      />
       <ResizablePanel defaultSize={60} minSize={20}>
         {right}
       </ResizablePanel>

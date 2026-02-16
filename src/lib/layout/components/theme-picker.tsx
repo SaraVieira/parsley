@@ -65,9 +65,15 @@ export function ThemePicker({ monacoTheme, setMonacoTheme }: ThemePickerProps) {
               onClick={() => setMonacoTheme(theme.id)}
             >
               <Check
-                className={`mr-2 size-3.5 ${monacoTheme === theme.id ? 'opacity-100' : 'opacity-0'}`}
+                className={`mr-2 size-3.5 ${monacoTheme === theme.id ? 'opacity-100 text-primary' : 'opacity-0'}`}
               />
-              {theme.label}
+              <span
+                className={
+                  monacoTheme === theme.id ? 'font-semibold text-primary' : ''
+                }
+              >
+                {theme.label}
+              </span>
             </DropdownMenuItem>
           ))}
         </div>

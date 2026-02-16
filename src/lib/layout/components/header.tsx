@@ -16,6 +16,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { PostgresImportDialog } from '@/lib/components/postgres-import-dialog';
@@ -127,6 +128,11 @@ export const Header = () => {
                   <Upload className="mr-2 size-3.5" />
                   Import JSON
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setPgDialogOpen(true)}>
+                  <Database className="mr-2 size-3.5" />
+                  Import PostgreSQL
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleExportJson}>
                   <Download className="mr-2 size-3.5" />
                   Export JSON
@@ -142,21 +148,6 @@ export const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="xs" className="h-6 text-xs">
-                  Import
-                  <ChevronDown className="ml-0.5 size-3" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem onClick={() => setPgDialogOpen(true)}>
-                  <Database className="mr-2 size-3.5" />
-                  PostgreSQL
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
             <ThemePicker
               monacoTheme={monacoTheme}
               setMonacoTheme={setMonacoTheme}
@@ -168,7 +159,7 @@ export const Header = () => {
             variant="ghost"
             size="icon-xs"
             onClick={handleCopy}
-            title="Copy result to clipboard"
+            title="Copy transformed JSON to clipboard"
           >
             {copied ? (
               <Check className="size-3.5 text-emerald-500" />

@@ -30,6 +30,20 @@ export function DiffView() {
     return <EditorLoading />;
   }
 
+  if (original === modified) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-center text-muted-foreground">
+          <p className="text-sm">No differences to show</p>
+          <p className="mt-1 text-xs">
+            Run a transform to see differences between the original and
+            transformed JSON
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <DiffEditor
       loading={<EditorLoading />}

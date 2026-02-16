@@ -40,7 +40,7 @@ const levelPrefixes: Record<string, string> = {
 export function ConsolePanel() {
   const consoleLogs = useParsleyStore((s) => s.consoleLogs);
   const clearConsoleLogs = useParsleyStore((s) => s.clearConsoleLogs);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   return (

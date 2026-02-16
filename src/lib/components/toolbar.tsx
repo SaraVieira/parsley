@@ -71,14 +71,14 @@ export function Toolbar() {
   return (
     <div className="flex items-center justify-between border-b border-border px-3 h-10 shrink-0">
       <div className="flex min-w-0 items-center gap-1">
-        <div className="flex items-center gap-1 border-r border-border/60 pr-2 mr-1">
+        <div className="flex items-center gap-3 border-r border-border/60 pr-2 mr-1">
           <button
             type="button"
             onClick={() => setEditorTab('json')}
-            className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
+            className={`border-b-2 px-0.5 pb-1 text-xs font-medium transition-colors ${
               editorTab === 'json'
-                ? 'bg-secondary text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'border-primary text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             JSON Input
@@ -86,10 +86,10 @@ export function Toolbar() {
           <button
             type="button"
             onClick={() => setEditorTab('transform')}
-            className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
+            className={`border-b-2 px-0.5 pb-1 text-xs font-medium transition-colors ${
               editorTab === 'transform'
-                ? 'bg-secondary text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'border-primary text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             Transform
