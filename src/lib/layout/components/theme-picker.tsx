@@ -1,6 +1,5 @@
-import { loader } from '@monaco-editor/react';
 import { Check, ChevronDown, Palette, Search } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -9,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { defineMonacoTheme } from '@/lib/utils/define-monaco-theme';
 import { MONACO_THEMES } from '@/lib/utils/monaco-themes';
 
 type ThemePickerProps = {
@@ -19,6 +17,7 @@ type ThemePickerProps = {
 
 export function ThemePicker({ monacoTheme, setMonacoTheme }: ThemePickerProps) {
   const [search, setSearch] = useState('');
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const filtered = search
     ? MONACO_THEMES.filter((t) =>
@@ -27,7 +26,14 @@ export function ThemePicker({ monacoTheme, setMonacoTheme }: ThemePickerProps) {
     : MONACO_THEMES;
 
   return (
-    <DropdownMenu onOpenChange={() => setSearch('')}>
+    <DropdownMenu
+      onOpenChange={(open) => {
+        setSearch('');
+        if (open) {
+          requestAnimationFrame(() => searchRef.current?.focus());
+        }
+      }}
+    >
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="xs" className="h-6 text-xs">
           <Palette className="mr-0.5 size-3" />
@@ -39,6 +45,7 @@ export function ThemePicker({ monacoTheme, setMonacoTheme }: ThemePickerProps) {
         <div className="flex items-center gap-2 border-b px-2 pb-2">
           <Search className="size-3.5 shrink-0 text-muted-foreground" />
           <input
+            ref={searchRef}
             type="text"
             placeholder="Search themes..."
             value={search}
@@ -55,12 +62,7 @@ export function ThemePicker({ monacoTheme, setMonacoTheme }: ThemePickerProps) {
           {filtered.map((theme) => (
             <DropdownMenuItem
               key={theme.id}
-              onClick={async () => {
-                setMonacoTheme(theme.id);
-                const monaco = await loader.init();
-                await defineMonacoTheme(monaco, theme.id);
-                monaco.editor.setTheme(theme.id);
-              }}
+              onClick={() => setMonacoTheme(theme.id)}
             >
               <Check
                 className={`mr-2 size-3.5 ${monacoTheme === theme.id ? 'opacity-100' : 'opacity-0'}`}

@@ -18,12 +18,18 @@ export async function defineMonacoTheme(
 
   const entry = MONACO_THEMES.find((t) => t.id === themeId);
   if (!entry?.fileName) {
+    console.error(
+      `Monaco theme "${themeId}" not found in theme list. Available themes: ${MONACO_THEMES.map((t) => t.id).join(', ')}`,
+    );
     return;
   }
 
   const loader =
     themeModules[`/node_modules/monaco-themes/themes/${entry.fileName}.json`];
   if (!loader) {
+    console.error(
+      `Monaco theme file not found for "${themeId}" (expected: ${entry.fileName}.json)`,
+    );
     return;
   }
 
