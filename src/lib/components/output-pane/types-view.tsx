@@ -2,7 +2,6 @@ import Editor from '@monaco-editor/react';
 import { useMemo, useState } from 'react';
 
 import { EditorLoading } from '@/lib/components/editor-loading';
-import { useResolvedTheme } from '@/lib/hooks/use-resolved-theme';
 import { useParsleyStore } from '@/lib/stores/parsley-store';
 import { jsonToTypeScript } from '@/lib/utils/json-to-types';
 import { jsonToZod } from '@/lib/utils/json-to-zod';
@@ -14,8 +13,7 @@ type TypesViewProps = {
 type SchemaMode = 'typescript' | 'zod';
 
 export function TypesView({ data }: TypesViewProps) {
-  const resolvedTheme = useResolvedTheme();
-  const monacoTheme = resolvedTheme === 'dark' ? 'vs-dark' : 'light';
+  const monacoTheme = 'vs-dark';
   const [schemaMode, setSchemaMode] = useState<SchemaMode>('typescript');
   const rootName = useParsleyStore((s) => s.rootName);
 

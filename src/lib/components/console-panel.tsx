@@ -25,9 +25,9 @@ function formatLogArg(arg: unknown): string {
 
 const levelColors: Record<string, string> = {
   log: 'text-foreground',
-  info: 'text-blue-500 dark:text-blue-400',
-  warn: 'text-amber-500 dark:text-amber-400',
-  error: 'text-red-500 dark:text-red-400',
+  info: 'text-blue-400',
+  warn: 'text-amber-400',
+  error: 'text-red-400',
 };
 
 const levelPrefixes: Record<string, string> = {

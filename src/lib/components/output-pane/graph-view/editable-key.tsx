@@ -61,7 +61,7 @@ export function EditableKey({
             onBulkRenameKey(keyName, editValue);
             setShowChoice(false);
           }}
-          className="rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-600 hover:bg-amber-500/20 dark:text-amber-400"
+          className="rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-400 hover:bg-amber-500/20"
           title="Rename all matching keys"
         >
           All

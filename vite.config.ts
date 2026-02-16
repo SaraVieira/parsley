@@ -54,9 +54,6 @@ export default defineConfig(({ mode }) => {
         : []),
       VitePWA(pwaOptions),
     ],
-    ssr: {
-      noExternal: ['@theme-toggles/react'],
-    },
     server: {
       open: true,
     },

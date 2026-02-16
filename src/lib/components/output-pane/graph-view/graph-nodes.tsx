@@ -35,14 +35,14 @@ function ObjectNode({
   const isRoot = data.jsonPath === '$';
   return (
     <div
-      className={`min-w-50 max-w-[320px] rounded-lg border border-border/60 bg-card shadow-md dark:border-white/10 dark:bg-zinc-900 ${dimClass} ${ringClass}`}
+      className={`min-w-50 max-w-[320px] rounded-lg border border-white/10 bg-zinc-900 shadow-md ${dimClass} ${ringClass}`}
     >
       <Handle
         type="target"
         position={Position.Left}
         className="size-1.5! bg-zinc-500/40! cursor-default!"
       />
-      <div className="flex items-center rounded-t-lg border-b border-border/60 bg-zinc-500/10 px-3 py-1.5 text-xs font-semibold text-zinc-300 dark:border-white/10 dark:bg-zinc-500/15">
+      <div className="flex items-center rounded-t-lg border-b border-white/10 bg-zinc-500/15 px-3 py-1.5 text-xs font-semibold text-zinc-300">
         <div className="flex-1 min-w-0">
           <EditableLabel label={data.label} isRoot={isRoot} />
         </div>
@@ -94,7 +94,7 @@ function ObjectNode({
         </div>
       )}
       {data.jsonPath && (
-        <div className="border-t border-border/60 dark:border-white/10 px-3 py-1">
+        <div className="border-t border-white/10 px-3 py-1">
           <button
             type="button"
             onClick={(e) => {
@@ -134,14 +134,14 @@ function ArrayNode({
   const isRoot = data.jsonPath === '$';
   return (
     <div
-      className={`min-w-[150px] rounded-lg border border-border/60 bg-card shadow-md dark:border-white/10 dark:bg-zinc-900 ${dimClass} ${ringClass}`}
+      className={`min-w-[150px] rounded-lg border border-white/10 bg-zinc-900 shadow-md ${dimClass} ${ringClass}`}
     >
       <Handle
         type="target"
         position={Position.Left}
         className="!size-1.5 !bg-zinc-500/40 !cursor-default"
       />
-      <div className="flex items-center rounded-t-lg border-b border-border/60 bg-teal-500/10 px-3 py-1.5 text-xs font-semibold text-teal-600 dark:border-white/10 dark:bg-teal-500/20 dark:text-teal-400">
+      <div className="flex items-center rounded-t-lg border-b border-white/10 bg-teal-500/20 px-3 py-1.5 text-xs font-semibold text-teal-400">
         <div className="flex-1 min-w-0">
           <EditableLabel label={data.label} isRoot={isRoot} />
         </div>
@@ -153,7 +153,7 @@ function ArrayNode({
                 e.stopPropagation();
                 onDelete(data.jsonPath ?? '');
               }}
-              className="shrink-0 rounded p-0.5 text-teal-600/50 hover:text-destructive hover:bg-destructive/10 dark:text-teal-400/50"
+              className="shrink-0 rounded p-0.5 text-teal-400/50 hover:text-destructive hover:bg-destructive/10"
             >
               <Trash2 className="size-3" />
             </button>
@@ -165,14 +165,14 @@ function ArrayNode({
         <span>{data.itemCount} items</span>
       </div>
       {data.jsonPath && (
-        <div className="border-t border-border/60 dark:border-white/10 px-3 py-1">
+        <div className="border-t border-white/10 px-3 py-1">
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               onAdd(data.jsonPath ?? '', true);
             }}
-            className="nodrag flex items-center gap-1 text-[10px] text-muted-foreground hover:text-teal-600 dark:hover:text-teal-400"
+            className="nodrag flex items-center gap-1 text-[10px] text-muted-foreground hover:text-teal-400"
           >
             <Plus className="size-2.5" /> Add item
           </button>
@@ -199,7 +199,7 @@ function ValueNode({
   const ringClass = highlighted === true ? 'ring-2 ring-primary' : '';
   return (
     <div
-      className={`min-w-[120px] max-w-[320px] rounded-lg border border-border/60 bg-card shadow-md dark:border-white/10 dark:bg-zinc-900 ${dimClass} ${ringClass}`}
+      className={`min-w-[120px] max-w-[320px] rounded-lg border border-white/10 bg-zinc-900 shadow-md ${dimClass} ${ringClass}`}
     >
       <Handle
         type="target"

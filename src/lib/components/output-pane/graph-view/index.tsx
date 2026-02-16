@@ -10,7 +10,6 @@ import { Check, Copy, Search, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 
-import { useResolvedTheme } from '@/lib/hooks/use-resolved-theme';
 import { useParsleyStore } from '@/lib/stores/parsley-store';
 import { jsonToGraph } from '@/lib/utils/json-to-graph';
 
@@ -27,7 +26,6 @@ type GraphViewProps = {
 };
 
 export function GraphView({ data }: GraphViewProps) {
-  const resolvedTheme = useResolvedTheme();
   const updateValueAtPath = useParsleyStore((s) => s.updateValueAtPath);
   const storeDeleteAtPath = useParsleyStore((s) => s.deleteAtPath);
   const storeAddAtPath = useParsleyStore((s) => s.addAtPath);
@@ -270,7 +268,7 @@ export function GraphView({ data }: GraphViewProps) {
           nodesConnectable={false}
           fitView
           fitViewOptions={{ padding: 0.2 }}
-          colorMode={resolvedTheme}
+          colorMode="dark"
           proOptions={{ hideAttribution: true }}
           minZoom={0.1}
           maxZoom={2}

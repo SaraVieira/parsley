@@ -27,11 +27,11 @@ export function isSimpleKey(key: string): boolean {
 export function getValueColor(type: string): string {
   switch (type) {
     case 'string':
-      return 'text-emerald-500 dark:text-emerald-400';
+      return 'text-emerald-400';
     case 'number':
-      return 'text-blue-500 dark:text-blue-400';
+      return 'text-blue-400';
     case 'boolean':
-      return 'text-amber-500 dark:text-amber-400';
+      return 'text-amber-400';
     case 'null':
     case 'undefined':
       return 'text-muted-foreground italic';

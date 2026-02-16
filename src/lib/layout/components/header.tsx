@@ -19,7 +19,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { PostgresImportDialog } from '@/lib/components/postgres-import-dialog';
-import { ThemeToggle } from '@/lib/components/theme-toggle';
 import { useParsleyStore } from '@/lib/stores/parsley-store';
 import { jsonToCsv } from '@/lib/utils/json-to-csv';
 import { jsonToTypeScript } from '@/lib/utils/json-to-types';
@@ -165,7 +164,6 @@ export const Header = () => {
               <Copy className="size-3.5" />
             )}
           </Button>
-          <ThemeToggle />
         </div>
       </div>
 

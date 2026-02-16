@@ -3,7 +3,6 @@ import { type DragEvent, useCallback, useRef, useState } from 'react';
 
 import { ConsolePanel } from '@/lib/components/console-panel';
 import { EditorLoading } from '@/lib/components/editor-loading';
-import { useResolvedTheme } from '@/lib/hooks/use-resolved-theme';
 import { useParsleyStore } from '@/lib/stores/parsley-store';
 import { registerTransformCompletions } from '@/lib/utils/snippets/register-completions';
 
@@ -20,8 +19,7 @@ export function EditorPane() {
     autoRun,
   } = useParsleyStore();
 
-  const resolvedTheme = useResolvedTheme();
-  const monacoTheme = resolvedTheme === 'dark' ? 'vs-dark' : 'light';
+  const monacoTheme = 'vs-dark';
   const [isDragging, setIsDragging] = useState(false);
   const snippetsRegistered = useRef(false);
   const autoRunTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

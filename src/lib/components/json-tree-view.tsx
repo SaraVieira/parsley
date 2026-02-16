@@ -150,9 +150,7 @@ function TreeNode({
             )}
           </button>
           <span className="text-muted-foreground">{keyName}:</span>
-          <span className="text-teal-600 dark:text-teal-400">
-            Array({value.length})
-          </span>
+          <span className="text-teal-400">Array({value.length})</span>
         </div>
         {expanded && (
           <div>

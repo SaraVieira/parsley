@@ -22,7 +22,7 @@ export function CollapseToggle({
         e.stopPropagation();
         toggleCollapse(nodeId);
       }}
-      className="ml-auto shrink-0 rounded p-0.5 hover:bg-black/10 dark:hover:bg-white/10"
+      className="ml-auto shrink-0 rounded p-0.5 hover:bg-white/10"
     >
       {isCollapsed ? (
         <ChevronRight className="size-3" />
