@@ -5,107 +5,107 @@ import {
   HeadContent,
   Outlet,
   Scripts,
-} from "@tanstack/react-router";
-import type { ReactNode } from "react";
+} from '@tanstack/react-router';
+import type { ReactNode } from 'react';
 
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { Layout } from "@/lib/layout";
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { Layout } from '@/lib/layout';
 
-import "@/lib/styles/globals.css";
-import { Leaf } from "lucide-react";
+import '@/lib/styles/globals.css';
+import { Leaf } from 'lucide-react';
 
-const title = "Parsley";
-const description = "A browser-based JSON editor and transformer for engineers";
-const url = "https://parsley.dotenv.dev";
+const title = 'Parsley';
+const description = 'A browser-based JSON editor and transformer for engineers';
+const url = 'https://parsley.dotenv.dev';
 
 export const Route = createRootRoute({
   ssr: false,
   head: () => ({
     meta: [
       {
-        charSet: "utf-8",
+        charSet: 'utf-8',
       },
       {
         title,
       },
       {
-        name: "description",
+        name: 'description',
         content: description,
       },
       {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1.0",
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1.0',
       },
       {
-        name: "application-name",
+        name: 'application-name',
         content: title,
       },
       {
-        name: "apple-mobile-web-app-capable",
-        content: "yes",
+        name: 'apple-mobile-web-app-capable',
+        content: 'yes',
       },
       {
-        name: "apple-mobile-web-app-status-bar-style",
-        content: "default",
+        name: 'apple-mobile-web-app-status-bar-style',
+        content: 'default',
       },
       {
-        name: "apple-mobile-web-app-title",
+        name: 'apple-mobile-web-app-title',
         content: title,
       },
       {
-        name: "theme-color",
-        content: "#000000",
+        name: 'theme-color',
+        content: '#000000',
       },
       {
-        name: "og:type",
-        content: "website",
+        name: 'og:type',
+        content: 'website',
       },
       {
-        name: "og:url",
+        name: 'og:url',
         content: url,
       },
       {
-        name: "og:title",
+        name: 'og:title',
         content: title,
       },
       {
-        name: "og:description",
+        name: 'og:description',
         content: description,
       },
       {
-        name: "twitter:card",
-        content: "summary_large_image",
+        name: 'twitter:card',
+        content: 'summary_large_image',
       },
       {
-        name: "twitter:url",
+        name: 'twitter:url',
         content: url,
       },
       {
-        name: "twitter:title",
+        name: 'twitter:title',
         content: title,
       },
       {
-        name: "twitter:description",
+        name: 'twitter:description',
         content: description,
       },
     ],
     links: [
       {
-        rel: "icon",
-        href: "/favicon.ico",
+        rel: 'icon',
+        href: '/favicon.ico',
       },
       {
-        rel: "preconnect",
-        href: "https://fonts.googleapis.com",
+        rel: 'preconnect',
+        href: 'https://fonts.googleapis.com',
       },
       {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
-        crossOrigin: "anonymous",
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossOrigin: 'anonymous',
       },
       {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap",
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap',
       },
     ],
   }),
@@ -123,25 +123,25 @@ function RootShell({ children }: { children: ReactNode }) {
         <div
           id="shell-loading"
           style={{
-            position: "fixed",
+            position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            display: "flex",
-            flexDirection: "column",
-            background: "#09090b",
-            color: "#f4f4f5",
-            fontFamily: "Inter, -apple-system, sans-serif",
+            display: 'flex',
+            flexDirection: 'column',
+            background: '#09090b',
+            color: '#f4f4f5',
+            fontFamily: 'Inter, -apple-system, sans-serif',
           }}
         >
           {/* Header bar */}
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
+              display: 'flex',
+              alignItems: 'center',
               height: 40,
               flexShrink: 0,
-              borderBottom: "1px solid #1a1a22",
-              padding: "0 12px",
+              borderBottom: '1px solid #1a1a22',
+              padding: '0 12px',
               gap: 6,
             }}
           >
@@ -150,18 +150,18 @@ function RootShell({ children }: { children: ReactNode }) {
               style={{
                 fontSize: 14,
                 fontWeight: 600,
-                letterSpacing: "-0.01em",
+                letterSpacing: '-0.01em',
               }}
             >
               parsley
             </span>
-            <div style={{ display: "flex", gap: 2, marginLeft: 8 }}>
+            <div style={{ display: 'flex', gap: 2, marginLeft: 8 }}>
               <div
                 style={{
                   width: 32,
                   height: 24,
                   borderRadius: 4,
-                  background: "#27272a",
+                  background: '#27272a',
                 }}
               />
               <div
@@ -169,7 +169,7 @@ function RootShell({ children }: { children: ReactNode }) {
                   width: 48,
                   height: 24,
                   borderRadius: 4,
-                  background: "#27272a",
+                  background: '#27272a',
                 }}
               />
             </div>
@@ -177,12 +177,12 @@ function RootShell({ children }: { children: ReactNode }) {
           {/* Toolbar skeleton */}
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
+              display: 'flex',
+              alignItems: 'center',
               height: 36,
               flexShrink: 0,
-              borderBottom: "1px solid #1a1a22",
-              padding: "0 12px",
+              borderBottom: '1px solid #1a1a22',
+              padding: '0 12px',
               gap: 4,
             }}
           >
@@ -193,19 +193,19 @@ function RootShell({ children }: { children: ReactNode }) {
                   width: w,
                   height: 22,
                   borderRadius: 4,
-                  background: i === 0 ? "#10b98118" : "#27272a",
+                  background: i === 0 ? '#10b98118' : '#27272a',
                 }}
               />
             ))}
           </div>
           {/* Split pane skeleton */}
-          <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+          <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
             <div
               style={{
                 flex: 1,
                 padding: 16,
-                display: "flex",
-                flexDirection: "column",
+                display: 'flex',
+                flexDirection: 'column',
                 gap: 8,
               }}
             >
@@ -217,20 +217,20 @@ function RootShell({ children }: { children: ReactNode }) {
                       height: 14,
                       width: `${w * 80}%`,
                       borderRadius: 3,
-                      background: "#27272a",
+                      background: '#27272a',
                       opacity: 1 - i * 0.07,
                     }}
                   />
                 ),
               )}
             </div>
-            <div style={{ width: 1, background: "#1a1a22" }} />
+            <div style={{ width: 1, background: '#1a1a22' }} />
             <div
               style={{
                 flex: 1,
                 padding: 16,
-                display: "flex",
-                flexDirection: "column",
+                display: 'flex',
+                flexDirection: 'column',
                 gap: 8,
               }}
             >
@@ -242,7 +242,7 @@ function RootShell({ children }: { children: ReactNode }) {
                       height: 14,
                       width: `${w * 80}%`,
                       borderRadius: 3,
-                      background: "#27272a",
+                      background: '#27272a',
                       opacity: 1 - i * 0.07,
                     }}
                   />

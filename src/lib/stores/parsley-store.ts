@@ -18,16 +18,150 @@ import { hydrateFromShareUrl } from '@/lib/utils/share-url';
 
 const SAMPLE_JSON = JSON.stringify(
   {
-    users: [
-      { id: 1, name: 'Alice', age: 30, role: 'admin' },
-      { id: 2, name: 'Bob', age: 25, role: 'user' },
-      { id: 3, name: 'Charlie', age: 35, role: 'user' },
-      { id: 4, name: 'Diana', age: 28, role: 'admin' },
+    name: 'Smith Family Cookbook',
+    version: 2,
+    lastUpdated: '2026-02-17T10:00:00Z',
+    categories: [
+      'stan-approved',
+      'rogers-personas',
+      'francine-specials',
+      'klaus-cuisine',
+    ],
+    recipes: [
+      {
+        id: 1,
+        title: "Francine's Forgot-The-Kids Casserole",
+        category: 'francine-specials',
+        chef: 'Francine Smith',
+        difficulty: 'easy',
+        prepTimeMinutes: 15,
+        ingredients: [
+          { name: 'tater tots', amount: 2, unit: 'bags', fresh: false },
+          { name: 'canned cheese', amount: 1, unit: 'cans', fresh: false },
+          { name: 'mystery meat', amount: 1.5, unit: 'lbs', fresh: false },
+          {
+            name: "wine (cook's treat)",
+            amount: 3,
+            unit: 'glasses',
+            fresh: true,
+          },
+        ],
+        rating: 3.2,
+        tags: ['comfort-food', 'questionable', 'family-dinner'],
+        stanApproved: true,
+      },
+      {
+        id: 2,
+        title: "Roger's Ricky Spanish Paella",
+        category: 'rogers-personas',
+        chef: 'Ricky Spanish',
+        difficulty: 'hard',
+        prepTimeMinutes: 90,
+        ingredients: [
+          { name: 'saffron', amount: 1, unit: 'pinch', fresh: true },
+          { name: 'stolen shrimp', amount: 1, unit: 'lbs', fresh: false },
+          { name: 'arborio rice', amount: 2, unit: 'cups', fresh: false },
+          { name: 'revenge', amount: 1, unit: 'dash', fresh: true },
+        ],
+        rating: 4.9,
+        tags: ['spanish', 'dramatic', 'persona-cooking'],
+        stanApproved: false,
+      },
+      {
+        id: 3,
+        title: "Stan's Freedom Meatloaf",
+        category: 'stan-approved',
+        chef: 'Stan Smith',
+        difficulty: 'medium',
+        prepTimeMinutes: 60,
+        ingredients: [
+          { name: 'ground beef', amount: 2, unit: 'lbs', fresh: true },
+          {
+            name: 'bald eagle seasoning',
+            amount: 3,
+            unit: 'tbsp',
+            fresh: false,
+          },
+          {
+            name: 'ketchup (american-made)',
+            amount: 0.5,
+            unit: 'cups',
+            fresh: false,
+          },
+          { name: 'patriotism', amount: 1776, unit: 'units', fresh: true },
+        ],
+        rating: 4.1,
+        tags: ['american', 'manly', 'cia-approved'],
+        stanApproved: true,
+      },
+      {
+        id: 4,
+        title: "Klaus's Sad Bowl of Bratwurst",
+        category: 'klaus-cuisine',
+        chef: 'Klaus Heissler',
+        difficulty: 'medium',
+        prepTimeMinutes: 40,
+        ingredients: [
+          { name: 'bratwurst', amount: 4, unit: 'links', fresh: true },
+          { name: 'sauerkraut', amount: 1, unit: 'cups', fresh: true },
+          { name: 'german mustard', amount: 3, unit: 'tbsp', fresh: false },
+          {
+            name: 'tears of a former olympian',
+            amount: 2,
+            unit: 'drops',
+            fresh: true,
+          },
+        ],
+        rating: 3.8,
+        tags: ['german', 'nostalgic', 'fish-made'],
+        stanApproved: false,
+      },
+      {
+        id: 5,
+        title: "Jeff's Totally Chill Nachos",
+        category: 'francine-specials',
+        chef: 'Jeff Fischer',
+        difficulty: 'easy',
+        prepTimeMinutes: 10,
+        ingredients: [
+          { name: 'tortilla chips', amount: 1, unit: 'bags', fresh: false },
+          { name: 'shredded cheese', amount: 2, unit: 'cups', fresh: false },
+          { name: 'jalapeños', amount: 5, unit: 'whole', fresh: true },
+          { name: 'good vibes', amount: 100, unit: 'percent', fresh: true },
+        ],
+        rating: 4.4,
+        tags: ['snack', 'chill', 'hayley-tolerates-it'],
+        stanApproved: false,
+      },
+      {
+        id: 6,
+        title: "Steve's Dungeon Master Dip",
+        category: 'stan-approved',
+        chef: 'Steve Smith',
+        difficulty: 'easy',
+        prepTimeMinutes: 15,
+        ingredients: [
+          { name: 'cream cheese', amount: 8, unit: 'oz', fresh: false },
+          { name: 'spinach', amount: 1, unit: 'cups', fresh: true },
+          { name: 'artichoke hearts', amount: 1, unit: 'cans', fresh: false },
+          {
+            name: "snot's secret ingredient",
+            amount: 1,
+            unit: 'tsp',
+            fresh: false,
+          },
+        ],
+        rating: 3.5,
+        tags: ['nerdy', 'party-dip', 'basement-approved'],
+        stanApproved: true,
+      },
     ],
     metadata: {
-      total: 4,
-      page: 1,
-      perPage: 10,
+      totalRecipes: 6,
+      averageRating: null,
+      featured: true,
+      warning: 'Roger may have poisoned one of these',
+      ciaClassified: false,
     },
   },
   null,
@@ -37,7 +171,7 @@ const SAMPLE_JSON = JSON.stringify(
 const SAMPLE_TRANSFORM = `// 'data' is your parsed JSON, '_' is lodash
 // Return the transformed result
 
-return _.filter(data.users, u => u.role === "admin")`;
+return _.filter(data.recipes, r => r.stanApproved)`;
 
 type ViewMode = 'graph' | 'tree' | 'types' | 'diff' | 'table';
 
