@@ -1,6 +1,7 @@
 import {
   Background,
   Controls,
+  MiniMap,
   type Node,
   ReactFlow,
   useEdgesState,
@@ -254,6 +255,13 @@ export function GraphView({ data }: GraphViewProps) {
         >
           <Background gap={16} size={1} />
           <Controls />
+          <MiniMap
+            pannable
+            zoomable
+            style={{ backgroundColor: 'hsl(var(--card))' }}
+            maskColor="hsl(var(--background) / 0.7)"
+            nodeColor="hsl(var(--primary) / 0.6)"
+          />
         </ReactFlow>
       </GraphContext.Provider>
       {selectedPath && (

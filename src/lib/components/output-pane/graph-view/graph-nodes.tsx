@@ -11,6 +11,7 @@ import { EditableLabel } from './editable-label';
 import { EditableValue } from './editable-value';
 import type { EntryData } from './graph-context';
 import { GraphContext } from './graph-context';
+import { formatBytes } from './graph-utils';
 
 function useIsHighlighted(nodeId: string) {
   const { highlightedIds } = useContext(GraphContext);
@@ -26,10 +27,13 @@ function ObjectNode({
     entries?: Array<EntryData>;
     hasChildren?: boolean;
     jsonPath?: string;
+    descendantCount?: number;
+    subtreeBytes?: number;
   }>
 >) {
   const highlighted = useIsHighlighted(id);
-  const { onDelete, onAdd } = useContext(GraphContext);
+  const { onDelete, onAdd, collapsedIds } = useContext(GraphContext);
+  const isCollapsed = collapsedIds.has(id);
   const dimClass = highlighted === false ? 'opacity-30' : '';
   const ringClass = highlighted === true ? 'ring-2 ring-primary' : '';
   const isRoot = data.jsonPath === '$';
@@ -70,6 +74,11 @@ function ObjectNode({
           <CollapseToggle nodeId={id} hasChildren={data.hasChildren} />
         </div>
       </div>
+      {isCollapsed && data.hasChildren && data.descendantCount != null && (
+        <div className="px-3 py-1 text-[10px] text-muted-foreground">
+          {data.descendantCount} nodes · {formatBytes(data.subtreeBytes ?? 0)}
+        </div>
+      )}
       {data.entries && data.entries.length > 0 && (
         <div className="px-3 py-1.5">
           {data.entries.map((entry) => {
@@ -133,10 +142,13 @@ function ArrayNode({
     itemCount?: number;
     hasChildren?: boolean;
     jsonPath?: string;
+    descendantCount?: number;
+    subtreeBytes?: number;
   }>
 >) {
   const highlighted = useIsHighlighted(id);
-  const { onDelete, onAdd } = useContext(GraphContext);
+  const { onDelete, onAdd, collapsedIds } = useContext(GraphContext);
+  const isCollapsed = collapsedIds.has(id);
   const dimClass = highlighted === false ? 'opacity-30' : '';
   const ringClass = highlighted === true ? 'ring-2 ring-primary' : '';
   const isRoot = data.jsonPath === '$';
@@ -170,7 +182,15 @@ function ArrayNode({
         </div>
       </div>
       <div className="px-3 py-1.5 text-xs text-muted-foreground flex items-center justify-between">
-        <span>{data.itemCount} items</span>
+        <span>
+          {data.itemCount} items
+          {isCollapsed && data.subtreeBytes != null && (
+            <span className="text-[10px]">
+              {' '}
+              · {formatBytes(data.subtreeBytes)}
+            </span>
+          )}
+        </span>
       </div>
       {data.jsonPath && (
         <div className="border-t border-white/10 px-3 py-1">

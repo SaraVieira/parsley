@@ -16,6 +16,8 @@ type NodeData = {
   valueType?: string;
   jsonPath?: string;
   hasChildren?: boolean;
+  descendantCount?: number;
+  subtreeBytes?: number;
   [key: string]: unknown;
 };
 
@@ -23,6 +25,8 @@ type LayoutResult = {
   nodes: Array<Node<NodeData>>;
   edges: Array<Edge>;
   height: number;
+  descendantCount: number;
+  subtreeBytes: number;
 };
 
 type GraphContext = {
@@ -48,6 +52,12 @@ function addEdge(
   }
 }
 
+type ChildStats = {
+  endY: number;
+  descendantCount: number;
+  subtreeBytes: number;
+};
+
 function buildChildGraphs(
   items: Array<[string, unknown, string]>,
   parentNodeId: string,
@@ -56,8 +66,10 @@ function buildChildGraphs(
   idCounter: { current: number },
   nodes: Array<Node<NodeData>>,
   edges: Array<Edge>,
-): number {
+): ChildStats {
   let childY = startY;
+  let descendantCount = 0;
+  let subtreeBytes = 0;
   const childX = x + NODE_WIDTH + HORIZONTAL_GAP;
   for (const [childKey, childData, childPath] of items) {
     const childResult = buildGraph(
@@ -71,9 +83,11 @@ function buildChildGraphs(
     );
     nodes.push(...childResult.nodes);
     edges.push(...childResult.edges);
+    descendantCount += childResult.descendantCount;
+    subtreeBytes += childResult.subtreeBytes;
     childY += childResult.height + VERTICAL_GAP;
   }
-  return childY;
+  return { endY: childY, descendantCount, subtreeBytes };
 }
 
 function buildArrayGraph(
@@ -83,6 +97,7 @@ function buildArrayGraph(
 ): LayoutResult {
   const nodes: Array<Node<NodeData>> = [];
   const edges: Array<Edge> = [];
+  const ownBytes = JSON.stringify(data).length;
 
   nodes.push({
     id: nodeId,
@@ -93,6 +108,8 @@ function buildArrayGraph(
       itemCount: data.length,
       jsonPath: ctx.jsonPath,
       hasChildren: data.length > 0,
+      descendantCount: 0,
+      subtreeBytes: ownBytes,
     },
   });
   addEdge(edges, ctx.parentId, nodeId);
@@ -102,7 +119,7 @@ function buildArrayGraph(
     item,
     `${ctx.jsonPath}[${i}]`,
   ]);
-  const childY = buildChildGraphs(
+  const childStats = buildChildGraphs(
     items,
     nodeId,
     ctx.x,
@@ -111,11 +128,21 @@ function buildArrayGraph(
     nodes,
     edges,
   );
+
+  const totalDescendants = childStats.descendantCount;
+  nodes[0].data.descendantCount = totalDescendants;
+
   const totalHeight = Math.max(
     NODE_HEIGHT_BASE + NODE_HEIGHT_PER_FIELD,
-    childY - ctx.y,
+    childStats.endY - ctx.y,
   );
-  return { nodes, edges, height: totalHeight };
+  return {
+    nodes,
+    edges,
+    height: totalHeight,
+    descendantCount: totalDescendants + 1,
+    subtreeBytes: ownBytes,
+  };
 }
 
 function buildObjectGraph(
@@ -125,6 +152,7 @@ function buildObjectGraph(
 ): LayoutResult {
   const nodes: Array<Node<NodeData>> = [];
   const edges: Array<Edge> = [];
+  const ownBytes = JSON.stringify(data).length;
 
   const primitiveEntries: Array<{ key: string; value: string; type: string }> =
     [];
@@ -153,11 +181,13 @@ function buildObjectGraph(
       entries: primitiveEntries,
       jsonPath: ctx.jsonPath,
       hasChildren: complexItems.length > 0,
+      descendantCount: 0,
+      subtreeBytes: ownBytes,
     },
   });
   addEdge(edges, ctx.parentId, nodeId);
 
-  const childY = buildChildGraphs(
+  const childStats = buildChildGraphs(
     complexItems,
     nodeId,
     ctx.x,
@@ -166,8 +196,18 @@ function buildObjectGraph(
     nodes,
     edges,
   );
-  const totalHeight = Math.max(nodeHeight, childY - ctx.y);
-  return { nodes, edges, height: totalHeight };
+
+  const totalDescendants = childStats.descendantCount;
+  nodes[0].data.descendantCount = totalDescendants;
+
+  const totalHeight = Math.max(nodeHeight, childStats.endY - ctx.y);
+  return {
+    nodes,
+    edges,
+    height: totalHeight,
+    descendantCount: totalDescendants + 1,
+    subtreeBytes: ownBytes,
+  };
 }
 
 function buildGraph(
@@ -184,6 +224,7 @@ function buildGraph(
 
   if (isPrimitive(data)) {
     const { display, type } = getValueDisplay(data);
+    const ownBytes = JSON.stringify(data).length;
     const nodes: Array<Node<NodeData>> = [
       {
         id: nodeId,
@@ -194,7 +235,13 @@ function buildGraph(
     ];
     const edges: Array<Edge> = [];
     addEdge(edges, parentId, nodeId);
-    return { nodes, edges, height: NODE_HEIGHT_BASE + NODE_HEIGHT_PER_FIELD };
+    return {
+      nodes,
+      edges,
+      height: NODE_HEIGHT_BASE + NODE_HEIGHT_PER_FIELD,
+      descendantCount: 1,
+      subtreeBytes: ownBytes,
+    };
   }
 
   if (Array.isArray(data)) {
@@ -205,7 +252,13 @@ function buildGraph(
     return buildObjectGraph(data as Record<string, unknown>, nodeId, ctx);
   }
 
-  return { nodes: [], edges: [], height: 0 };
+  return {
+    nodes: [],
+    edges: [],
+    height: 0,
+    descendantCount: 0,
+    subtreeBytes: 0,
+  };
 }
 
 export function jsonToGraph(

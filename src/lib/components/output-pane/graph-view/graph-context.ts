@@ -8,6 +8,8 @@ export type NodeData = {
   value?: string;
   valueType?: string;
   hasChildren?: boolean;
+  descendantCount?: number;
+  subtreeBytes?: number;
 };
 
 export type EntryData = { key: string; value: string; type: string };
