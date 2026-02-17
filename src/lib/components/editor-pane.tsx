@@ -1,5 +1,5 @@
 import Editor, { type Monaco } from '@monaco-editor/react';
-import { type DragEvent, useCallback, useRef, useState } from 'react';
+import { type DragEvent, useRef, useState } from 'react';
 
 import { ConsolePanel } from '@/lib/components/console-panel';
 import { EditorLoading } from '@/lib/components/editor-loading';
@@ -24,30 +24,24 @@ export function EditorPane() {
   const snippetsRegistered = useRef(false);
   const autoRunTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleTransformEditorMount = useCallback(
-    (_editor: unknown, monaco: Monaco) => {
-      if (!snippetsRegistered.current) {
-        registerTransformCompletions(monaco);
-        snippetsRegistered.current = true;
-      }
-    },
-    [],
-  );
+  const handleTransformEditorMount = (_editor: unknown, monaco: Monaco) => {
+    if (!snippetsRegistered.current) {
+      registerTransformCompletions(monaco);
+      snippetsRegistered.current = true;
+    }
+  };
 
-  const handleTransformChange = useCallback(
-    (value: string | undefined) => {
-      setTransformCode(value ?? '');
-      if (autoRun) {
-        if (autoRunTimerRef.current) {
-          clearTimeout(autoRunTimerRef.current);
-        }
-        autoRunTimerRef.current = setTimeout(() => {
-          executeTransform();
-        }, 500);
+  const handleTransformChange = (value: string | undefined) => {
+    setTransformCode(value ?? '');
+    if (autoRun) {
+      if (autoRunTimerRef.current) {
+        clearTimeout(autoRunTimerRef.current);
       }
-    },
-    [setTransformCode, autoRun, executeTransform],
-  );
+      autoRunTimerRef.current = setTimeout(() => {
+        executeTransform();
+      }, 500);
+    }
+  };
 
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();

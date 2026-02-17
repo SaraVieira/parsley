@@ -1,5 +1,4 @@
 import { DiffEditor } from '@monaco-editor/react';
-import { useMemo } from 'react';
 
 import { EditorLoading } from '@/lib/components/editor-loading';
 import { useMonacoTheme } from '@/lib/hooks/use-monaco-theme';
@@ -10,21 +9,19 @@ export function DiffView() {
   const parsedJson = useParsleyStore((s) => s.parsedJson);
   const transformedJson = useParsleyStore((s) => s.transformedJson);
 
-  const original = useMemo(() => {
-    try {
-      return JSON.stringify(parsedJson, null, 2);
-    } catch {
-      return String(parsedJson);
-    }
-  }, [parsedJson]);
+  let original: string;
+  try {
+    original = JSON.stringify(parsedJson, null, 2);
+  } catch {
+    original = String(parsedJson);
+  }
 
-  const modified = useMemo(() => {
-    try {
-      return JSON.stringify(transformedJson, null, 2);
-    } catch {
-      return String(transformedJson);
-    }
-  }, [transformedJson]);
+  let modified: string;
+  try {
+    modified = JSON.stringify(transformedJson, null, 2);
+  } catch {
+    modified = String(transformedJson);
+  }
 
   if (!themeReady) {
     return <EditorLoading />;

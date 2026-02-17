@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import TransformWorker from '@/lib/utils/transform-worker?worker';
 
 export type ConsoleEntry = {
   level: 'log' | 'warn' | 'error' | 'info';
@@ -12,32 +12,40 @@ type ExecuteResult = {
   logs: Array<ConsoleEntry>;
 };
 
+const TRANSFORM_TIMEOUT = 5000;
+
 export function executeTransformCode(
   code: string,
   jsonData: unknown,
-): ExecuteResult {
-  const logs: Array<ConsoleEntry> = [];
+): Promise<ExecuteResult> {
+  return new Promise((resolve) => {
+    const worker = new TransformWorker();
 
-  const mockConsole = {
-    log: (...args: Array<unknown>) =>
-      logs.push({ level: 'log', args, timestamp: Date.now() }),
-    warn: (...args: Array<unknown>) =>
-      logs.push({ level: 'warn', args, timestamp: Date.now() }),
-    error: (...args: Array<unknown>) =>
-      logs.push({ level: 'error', args, timestamp: Date.now() }),
-    info: (...args: Array<unknown>) =>
-      logs.push({ level: 'info', args, timestamp: Date.now() }),
-  };
+    const timeout = setTimeout(() => {
+      worker.terminate();
+      resolve({
+        result: null,
+        error: `Transform timed out after ${TRANSFORM_TIMEOUT / 1000}s`,
+        logs: [],
+      });
+    }, TRANSFORM_TIMEOUT);
 
-  try {
-    const fn = new Function('_', 'data', 'console', `'use strict';\n${code}`);
-    const result = fn(_, jsonData, mockConsole);
-    return { result, error: null, logs };
-  } catch (e) {
-    return {
-      result: null,
-      error: e instanceof Error ? e.message : 'Transform execution failed',
-      logs,
+    worker.onmessage = (e: MessageEvent<ExecuteResult>) => {
+      clearTimeout(timeout);
+      worker.terminate();
+      resolve(e.data);
     };
-  }
+
+    worker.onerror = (e) => {
+      clearTimeout(timeout);
+      worker.terminate();
+      resolve({
+        result: null,
+        error: e.message || 'Transform execution failed',
+        logs: [],
+      });
+    };
+
+    worker.postMessage({ code, jsonData });
+  });
 }

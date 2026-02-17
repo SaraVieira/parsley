@@ -1,7 +1,11 @@
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
-import { getValueColor, isSimpleKey } from '@/lib/utils/shared';
+import {
+  getValueColor,
+  getValueDisplay,
+  isSimpleKey,
+} from '@/lib/utils/shared';
 
 type JsonTreeViewProps = {
   data: unknown;
@@ -31,25 +35,6 @@ type TreeNodeProps = {
   onSelect?: (path: string, value: unknown) => void;
   defaultExpanded?: boolean;
 };
-
-function getLeafDisplay(value: unknown): { display: string; type: string } {
-  if (value === null) {
-    return { display: 'null', type: 'null' };
-  }
-  if (value === undefined) {
-    return { display: 'undefined', type: 'undefined' };
-  }
-  if (typeof value === 'string') {
-    return { display: `"${value}"`, type: 'string' };
-  }
-  if (typeof value === 'number') {
-    return { display: String(value), type: 'number' };
-  }
-  if (typeof value === 'boolean') {
-    return { display: String(value), type: 'boolean' };
-  }
-  return { display: String(value), type: 'unknown' };
-}
 
 function LeafNode({
   keyName,
@@ -95,22 +80,19 @@ function TreeNode({
 }: TreeNodeProps) {
   const [expanded, setExpanded] = useState(defaultExpanded || depth < 2);
 
-  const toggle = useCallback((e: React.MouseEvent) => {
+  const toggle = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
     setExpanded((v) => !v);
-  }, []);
+  };
 
-  const handleClick = useCallback(
-    (e: React.MouseEvent | React.KeyboardEvent) => {
-      e.stopPropagation();
-      onSelect?.(path, value);
-    },
-    [path, value, onSelect],
-  );
+  const handleClick = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation();
+    onSelect?.(path, value);
+  };
 
   // Primitive values
   if (value === null || value === undefined || typeof value !== 'object') {
-    const { display, type } = getLeafDisplay(value);
+    const { display, type } = getValueDisplay(value);
     return (
       <LeafNode
         keyName={keyName}
@@ -134,7 +116,7 @@ function TreeNode({
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
-              toggle(e as unknown as React.MouseEvent);
+              toggle(e);
             }
           }}
         >

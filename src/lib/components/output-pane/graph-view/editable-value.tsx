@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 
 import {
   Tooltip,
@@ -22,18 +22,16 @@ export function EditableValue({
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
 
-  const startEdit = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setEditValue(value);
-      setEditing(true);
-    },
-    [value],
-  );
+  const startEdit = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation();
+    setEditValue(value);
+    setEditing(true);
+  };
 
   if (editing) {
     return (
       <input
+        autoFocus
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
         onBlur={() => {
@@ -69,7 +67,7 @@ export function EditableValue({
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                startEdit(e as unknown as React.MouseEvent);
+                startEdit(e);
               }
             }}
           >

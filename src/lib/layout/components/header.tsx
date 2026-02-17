@@ -22,6 +22,7 @@ import {
 import { PostgresImportDialog } from '@/lib/components/postgres-import-dialog';
 import { ThemePicker } from '@/lib/layout/components/theme-picker';
 import { useParsleyStore } from '@/lib/stores/parsley-store';
+import { downloadFile } from '@/lib/utils/download-file';
 import { jsonToCsv } from '@/lib/utils/json-to-csv';
 import { jsonToTypeScript } from '@/lib/utils/json-to-types';
 
@@ -73,14 +74,11 @@ export const Header = () => {
   };
 
   const handleExportJson = () => {
-    const text = JSON.stringify(transformedJson, null, 2);
-    const blob = new Blob([text], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'data.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadFile(
+      JSON.stringify(transformedJson, null, 2),
+      'data.json',
+      'application/json',
+    );
   };
 
   const handleExportCsv = () => {
@@ -88,24 +86,15 @@ export const Header = () => {
     if (!csv) {
       return;
     }
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'data.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadFile(csv, 'data.csv', 'text/csv');
   };
 
   const handleExportTypes = () => {
-    const text = jsonToTypeScript(transformedJson);
-    const blob = new Blob([text], { type: 'text/typescript' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'types.ts';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadFile(
+      jsonToTypeScript(transformedJson),
+      'types.ts',
+      'text/typescript',
+    );
   };
 
   return (

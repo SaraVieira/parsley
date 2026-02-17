@@ -60,7 +60,7 @@ function generateZodObject(
     const safeKey = isSimpleKey(key) ? key : `"${key}"`;
     const typeName = capitalize(name) + capitalize(key);
     const schema = inferZod(value, typeName, indent + 1);
-    const comma = i < entries.length - 1 ? ',' : ',';
+    const comma = ',';
     lines.push(`${innerPad}${safeKey}: ${schema}${comma}\n`);
   }
 

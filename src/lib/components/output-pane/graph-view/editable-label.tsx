@@ -20,6 +20,7 @@ export function EditableLabel({
   if (editing) {
     return (
       <input
+        autoFocus
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
         onBlur={() => {

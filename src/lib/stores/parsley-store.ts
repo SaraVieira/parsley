@@ -201,7 +201,7 @@ type ParsleyState = {
 type ParsleyActions = {
   setJsonInput: (input: string) => void;
   setTransformCode: (code: string) => void;
-  executeTransform: () => void;
+  executeTransform: () => Promise<void>;
   setViewMode: (mode: ViewMode) => void;
   revert: () => void;
   reset: () => void;
@@ -279,14 +279,14 @@ export const useParsleyStore = create<ParsleyStore>()(
           set({ transformCode: code });
         },
 
-        executeTransform: () => {
+        executeTransform: async () => {
           const { parsedJson, transformCode, transformedJson, jsonError } =
             get();
           if (jsonError) {
             return;
           }
 
-          const { result, error, logs } = executeTransformCode(
+          const { result, error, logs } = await executeTransformCode(
             transformCode,
             parsedJson,
           );

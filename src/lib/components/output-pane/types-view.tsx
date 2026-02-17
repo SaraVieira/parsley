@@ -1,6 +1,6 @@
 import Editor from '@monaco-editor/react';
 import { Check, Copy } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { EditorLoading } from '@/lib/components/editor-loading';
@@ -21,13 +21,10 @@ export function TypesView({ data }: TypesViewProps) {
   const [copied, setCopied] = useState(false);
   const rootName = useParsleyStore((s) => s.rootName);
 
-  const types = useMemo(
-    () =>
-      schemaMode === 'zod'
-        ? jsonToZod(data, rootName)
-        : jsonToTypeScript(data, rootName),
-    [data, schemaMode, rootName],
-  );
+  const types =
+    schemaMode === 'zod'
+      ? jsonToZod(data, rootName)
+      : jsonToTypeScript(data, rootName);
 
   return (
     <div className="flex h-full flex-col">

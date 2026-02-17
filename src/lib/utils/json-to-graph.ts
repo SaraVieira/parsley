@@ -1,6 +1,6 @@
 import type { Edge, Node } from '@xyflow/react';
 
-import { isSimpleKey } from '@/lib/utils/shared';
+import { getValueDisplay, isPrimitive, isSimpleKey } from '@/lib/utils/shared';
 
 const NODE_WIDTH = 250;
 const NODE_HEIGHT_BASE = 40;
@@ -24,38 +24,6 @@ type LayoutResult = {
   edges: Array<Edge>;
   height: number;
 };
-
-function getValueDisplay(value: unknown): { display: string; type: string } {
-  if (value === null) {
-    return { display: 'null', type: 'null' };
-  }
-  if (value === undefined) {
-    return { display: 'undefined', type: 'undefined' };
-  }
-  if (typeof value === 'string') {
-    return { display: `"${value}"`, type: 'string' };
-  }
-  if (typeof value === 'number') {
-    return { display: String(value), type: 'number' };
-  }
-  if (typeof value === 'boolean') {
-    return { display: String(value), type: 'boolean' };
-  }
-  if (Array.isArray(value)) {
-    return { display: `Array(${value.length})`, type: 'array' };
-  }
-  return { display: 'Object', type: 'object' };
-}
-
-function isPrimitive(value: unknown): boolean {
-  return (
-    value === null ||
-    value === undefined ||
-    typeof value === 'string' ||
-    typeof value === 'number' ||
-    typeof value === 'boolean'
-  );
-}
 
 type GraphContext = {
   key: string;

@@ -7,7 +7,7 @@ import {
   useNodesState,
 } from '@xyflow/react';
 import { Check, Copy, Search, X } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 
 import { useParsleyStore } from '@/lib/stores/parsley-store';
@@ -40,73 +40,52 @@ export function GraphView({ data }: GraphViewProps) {
   const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
 
-  const onEditValue = useCallback(
-    (path: string, rawValue: string) => {
-      if (!path) {
-        return;
-      }
-      const value = parseDisplayValue(rawValue);
-      updateValueAtPath(path, value);
-    },
-    [updateValueAtPath],
-  );
+  const onEditValue = (path: string, rawValue: string) => {
+    if (!path) {
+      return;
+    }
+    const value = parseDisplayValue(rawValue);
+    updateValueAtPath(path, value);
+  };
 
-  const onDelete = useCallback(
-    (path: string) => {
-      if (!path || path === '$') {
-        return;
-      }
-      storeDeleteAtPath(path);
-    },
-    [storeDeleteAtPath],
-  );
+  const onDelete = (path: string) => {
+    if (!path || path === '$') {
+      return;
+    }
+    storeDeleteAtPath(path);
+  };
 
-  const onAdd = useCallback(
-    (path: string, isArray: boolean) => {
-      if (!path) {
-        return;
-      }
-      if (isArray) {
-        storeAddAtPath(path, '', null);
-      } else {
-        storeAddAtPath(path, 'newKey', null);
-      }
-    },
-    [storeAddAtPath],
-  );
+  const onAdd = (path: string, isArray: boolean) => {
+    if (!path) {
+      return;
+    }
+    if (isArray) {
+      storeAddAtPath(path, '', null);
+    } else {
+      storeAddAtPath(path, 'newKey', null);
+    }
+  };
 
-  const onRenameKey = useCallback(
-    (path: string, newKey: string) => {
-      if (!path) {
-        return;
-      }
-      storeRenameKeyAtPath(path, newKey);
-    },
-    [storeRenameKeyAtPath],
-  );
+  const onRenameKey = (path: string, newKey: string) => {
+    if (!path) {
+      return;
+    }
+    storeRenameKeyAtPath(path, newKey);
+  };
 
-  const onBulkRenameKey = useCallback(
-    (oldKey: string, newKey: string) => {
-      storeBulkRenameKey(oldKey, newKey);
-    },
-    [storeBulkRenameKey],
-  );
+  const onBulkRenameKey = (oldKey: string, newKey: string) => {
+    storeBulkRenameKey(oldKey, newKey);
+  };
 
-  const onBulkDeleteKey = useCallback(
-    (key: string) => {
-      storeBulkDeleteKey(key);
-    },
-    [storeBulkDeleteKey],
-  );
+  const onBulkDeleteKey = (key: string) => {
+    storeBulkDeleteKey(key);
+  };
 
-  const onRenameRoot = useCallback(
-    (name: string) => {
-      setRootName(name);
-    },
-    [setRootName],
-  );
+  const onRenameRoot = (name: string) => {
+    setRootName(name);
+  };
 
-  const toggleCollapse = useCallback((nodeId: string) => {
+  const toggleCollapse = (nodeId: string) => {
     setCollapsedIds((prev) => {
       const next = new Set(prev);
       if (next.has(nodeId)) {
@@ -116,22 +95,22 @@ export function GraphView({ data }: GraphViewProps) {
       }
       return next;
     });
-  }, []);
+  };
 
-  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+  const onNodeClick = (_: React.MouseEvent, node: Node) => {
     const path = (node.data as NodeData).jsonPath;
     if (path) {
       setSelectedPath(path);
     }
-  }, []);
+  };
 
-  const handleCopyPath = useCallback(() => {
+  const handleCopyPath = () => {
     if (selectedPath) {
       navigator.clipboard.writeText(selectedPath);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     }
-  }, [selectedPath]);
+  };
 
   const { allNodes, allEdges, isTruncated } = useMemo(() => {
     const { nodes, edges } = jsonToGraph(data, rootName);
@@ -179,7 +158,7 @@ export function GraphView({ data }: GraphViewProps) {
     };
   }, [allNodes, allEdges, collapsedIds]);
 
-  const highlightedIds = useMemo(() => {
+  const highlightedIds = (() => {
     if (!searchQuery.trim()) {
       return new Set<string>();
     }
@@ -198,7 +177,7 @@ export function GraphView({ data }: GraphViewProps) {
       }
     }
     return matches;
-  }, [searchQuery, computedNodes]);
+  })();
 
   const [nodes, setNodes, onNodesChange] = useNodesState(computedNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(computedEdges);

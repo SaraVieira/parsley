@@ -9,7 +9,7 @@ import {
   WrapText,
   Zap,
 } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -42,22 +42,18 @@ export function Toolbar() {
 
   const [shareCopied, setShareCopied] = useState(false);
 
-  const handleRun = useCallback(() => {
-    executeTransform();
-  }, [executeTransform]);
-
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
         e.preventDefault();
-        handleRun();
+        executeTransform();
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [handleRun]);
+  }, [executeTransform]);
 
-  const handleShare = useCallback(() => {
+  const handleShare = () => {
     try {
       const url = createShareUrl(jsonInput, transformCode);
       navigator.clipboard.writeText(url);
@@ -66,7 +62,7 @@ export function Toolbar() {
     } catch {
       // ignore
     }
-  }, [jsonInput, transformCode]);
+  };
 
   return (
     <div className="flex items-center justify-between border-b border-border px-3 h-10 shrink-0">
@@ -219,7 +215,7 @@ export function Toolbar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={handleRun}>
+            <DropdownMenuItem onClick={() => executeTransform()}>
               <Play className="mr-2 size-3.5" />
               Run now
             </DropdownMenuItem>

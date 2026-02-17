@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { useCallback, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { GraphContext } from './graph-context';
 
@@ -15,24 +15,21 @@ export function EditableKey({
   const [showChoice, setShowChoice] = useState(false);
   const [editValue, setEditValue] = useState(keyName);
 
-  const startEdit = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setEditValue(keyName);
-      setEditing(true);
-      setShowChoice(false);
-    },
-    [keyName],
-  );
+  const startEdit = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation();
+    setEditValue(keyName);
+    setEditing(true);
+    setShowChoice(false);
+  };
 
-  const handleCommit = useCallback(() => {
+  const handleCommit = () => {
     if (!editValue || editValue === keyName) {
       setEditing(false);
       return;
     }
     setEditing(false);
     setShowChoice(true);
-  }, [editValue, keyName]);
+  };
 
   if (showChoice) {
     return (
@@ -80,6 +77,7 @@ export function EditableKey({
   if (editing) {
     return (
       <input
+        autoFocus
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
         onBlur={handleCommit}
@@ -108,7 +106,7 @@ export function EditableKey({
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          startEdit(e as unknown as React.MouseEvent);
+          startEdit(e);
         }
       }}
     >
